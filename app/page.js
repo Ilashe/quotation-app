@@ -43,7 +43,7 @@ export default function page() {
       name: 'CPA-VFD11202302',
       description: '20HP - 208V Indoor VFD Control Panel',
       price: 8215.00
-    }
+    },
     {
       id: 6,
       name: 'CPA-VFD12202302',
