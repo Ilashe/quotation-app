@@ -11,7 +11,7 @@ const inputStyles = `
   }
 `;
 
-export default function QuotationCalculator() {
+export default function page() {
   const [items, setItems] = useState([]);
   const [quotation, setQuotation] = useState([]);
   const [formData, setFormData] = useState({
@@ -146,7 +146,7 @@ export default function QuotationCalculator() {
   return (
     <div className="min-h-screen bg-white">
       <style>{inputStyles}</style>
-      
+
       {/* Header */}
       <div className="border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6 py-6">
