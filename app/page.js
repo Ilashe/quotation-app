@@ -475,7 +475,7 @@ const VacuumQuoteCalculator = () => {
                 min="1"
                 value={rows}
                 onChange={(e) => setRows(parseInt(e.target.value) || 1)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               />
             </div>
 
@@ -488,7 +488,7 @@ const VacuumQuoteCalculator = () => {
                 min="2"
                 value={spotsPerRow}
                 onChange={(e) => setSpotsPerRow(parseInt(e.target.value) || 2)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               />
             </div>
 
@@ -499,7 +499,7 @@ const VacuumQuoteCalculator = () => {
               <select
                 value={toolPreference}
                 onChange={(e) => setToolPreference(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               >
                 <option value="half">50/50 (Crevice + Claw)</option>
                 <option value="crevice">Crevice Only</option>
@@ -514,7 +514,7 @@ const VacuumQuoteCalculator = () => {
               <select
                 value={centralUnitType}
                 onChange={(e) => setCentralUnitType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               >
                 <option value="single">Single Pump (Preferred)</option>
                 <option value="dual">Dual Pump (Preferred)</option>
@@ -528,7 +528,7 @@ const VacuumQuoteCalculator = () => {
               <select
                 value={voltage}
                 onChange={(e) => setVoltage(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               >
                 <option value="460V">460V</option>
                 <option value="208V">208V</option>
@@ -542,7 +542,7 @@ const VacuumQuoteCalculator = () => {
               <select
                 value={vfdType}
                 onChange={(e) => setVfdType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               >
                 <option value="Indoor">Indoor</option>
                 <option value="Outdoor">Outdoor</option>
