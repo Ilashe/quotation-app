@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { Calculator, Download, Settings } from 'lucide-react';
+import { Calculator, Download, Settings, Trash2 } from 'lucide-react';
 
 // Complete price data from 2025 AVW Price List
 const priceData = {
@@ -435,9 +435,9 @@ const VacuumQuoteCalculator = () => {
 
     let csvContent = "Part Number,Description,Quantity,Unit Price,Total\n";
     quote.lineItems.forEach(item => {
-      csvContent += `"${item.partNumber}","${item.description}",${item.qty},$${item.unitPrice.toFixed(2)},$${item.total.toFixed(2)}\n`;
+      csvContent += `"${item.partNumber}","${item.description}",${item.qty},${item.unitPrice.toFixed(2)},${item.total.toFixed(2)}\n`;
     });
-    csvContent += `\n,,,,Subtotal,$${quote.subtotal.toFixed(2)}`;
+    csvContent += `\n,,,,Subtotal,${quote.subtotal.toFixed(2)}`;
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -445,6 +445,17 @@ const VacuumQuoteCalculator = () => {
     a.href = url;
     a.download = `vacuum-quote-${rows}x${spotsPerRow}.csv`;
     a.click();
+  };
+
+  const deleteLineItem = (index) => {
+    const updatedLineItems = quote.lineItems.filter((_, i) => i !== index);
+    const newSubtotal = updatedLineItems.reduce((sum, item) => sum + item.total, 0);
+    
+    setQuote({
+      ...quote,
+      lineItems: updatedLineItems,
+      subtotal: newSubtotal
+    });
   };
 
   return (
@@ -600,6 +611,7 @@ const VacuumQuoteCalculator = () => {
                     <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Qty</th>
                     <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Unit Price</th>
                     <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Total</th>
+                    <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -610,12 +622,21 @@ const VacuumQuoteCalculator = () => {
                       <td className="px-4 py-3 text-sm text-center text-gray-800">{item.qty}</td>
                       <td className="px-4 py-3 text-sm text-right text-gray-800">${item.unitPrice.toFixed(2)}</td>
                       <td className="px-4 py-3 text-sm text-right font-semibold text-gray-900">${item.total.toFixed(2)}</td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => deleteLineItem(index)}
+                          className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition-colors"
+                          title="Delete item"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
                 <tfoot>
                   <tr className="bg-indigo-50 border-t-2 border-indigo-200">
-                    <td colSpan="4" className="px-4 py-4 text-right text-lg font-bold text-gray-800">Subtotal:</td>
+                    <td colSpan="5" className="px-4 py-4 text-right text-lg font-bold text-gray-800">Subtotal:</td>
                     <td className="px-4 py-4 text-right text-xl font-bold text-indigo-600">${quote.subtotal.toFixed(2)}</td>
                   </tr>
                 </tfoot>
