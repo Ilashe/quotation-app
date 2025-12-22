@@ -485,7 +485,20 @@ const VacuumQuoteCalculator = () => {
                 type="number"
                 min="1"
                 value={rows}
-                onChange={(e) => setRows(parseInt(e.target.value) || 1)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || value === '0') {
+                    setRows('');
+                  } else {
+                    const parsed = parseInt(value);
+                    setRows(parsed >= 1 ? parsed : 1);
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === '' || parseInt(e.target.value) < 1) {
+                    setRows(1);
+                  }
+                }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               />
             </div>
@@ -498,7 +511,20 @@ const VacuumQuoteCalculator = () => {
                 type="number"
                 min="2"
                 value={spotsPerRow}
-                onChange={(e) => setSpotsPerRow(parseInt(e.target.value) || 2)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '' || value === '0' || value === '1') {
+                    setSpotsPerRow('');
+                  } else {
+                    const parsed = parseInt(value);
+                    setSpotsPerRow(parsed >= 2 ? parsed : 2);
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === '' || parseInt(e.target.value) < 2) {
+                    setSpotsPerRow(2);
+                  }
+                }}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               />
             </div>
