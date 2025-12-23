@@ -1,77 +1,88 @@
 "use client";
-import React, { useState } from 'react';
-import { Calculator, Download, Settings, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Calculator, Download, Trash2 } from 'lucide-react';
 
 // Complete price data from 2025 AVW Price List
 const priceData = {
-  centralUnits: {
-    "SYS-20C-7030BS0B": {
+  centralUnits: [
+    {
+      partNumber: "SYS-20C-7030BS0B",
       name: "Eurovac III - 20HP & 30\" Sep Detail Vacuum System",
       price: 17360.00,
       bays: 5,
       hp: "20HP"
     },
-    "SYS-25C-6534BS0B": {
+    {
+      partNumber: "SYS-25C-6534BS0B",
       name: "Eurovac III - 25HP & 34\" Sep Detail Vacuum System",
       price: 19370.00,
       bays: 6,
       hp: "25HP"
     },
-    "SYS-30C-7038BS0B": {
+    {
+      partNumber: "SYS-30C-7038BS0B",
       name: "Eurovac III - 30HP & 38\" Sep Detail Vacuum System",
       price: 24213.00,
       bays: [7, 8],
       hp: "30HP"
     },
-    "SYS-152-7038BS0B": {
+    {
+      partNumber: "SYS-152-7038BS0B",
       name: "Eurovac III - Double 15HP & 38\" Sep Detail Vacuum System",
       price: 28760.00,
       bays: [7, 8],
       hp: "Dual 15HP"
     },
-    "SYS-40C-7042BS0S": {
+    {
+      partNumber: "SYS-40C-7042BS0S",
       name: "Eurovac III - 40HP & 42\" Sep Detail Vacuum System",
       price: 28329.00,
       bays: [9, 10],
       hp: "40HP"
     },
-    "SYS-202-7038BS0B": {
+    {
+      partNumber: "SYS-202-7038BS0B",
       name: "Eurovac III - Double 20HP & 38\" Sep Detail Vacuum System",
       price: 34370.00,
       bays: [9, 10],
       hp: "Dual 20HP"
     },
-    "SYS-50C-7542BS0S": {
+    {
+      partNumber: "SYS-50C-7542BS0S",
       name: "Eurovac III - 50HP & 42\" Sep Detail Vacuum System",
       price: 34320.00,
       bays: [11, 12, 13],
       hp: "50HP"
     },
-    "SYS-252-7042BS0B": {
+    {
+      partNumber: "SYS-252-7042BS0B",
       name: "Eurovac III - Double 25HP & 42\" Sep Detail Vacuum System",
       price: 40545.00,
       bays: [11, 12, 13],
       hp: "Dual 25HP"
     },
-    "SYS-60C-7548BS0S": {
+    {
+      partNumber: "SYS-60C-7548BS0S",
       name: "Eurovac III - 60HP & 48\" Sep Detail Vacuum System",
       price: 40210.00,
       bays: [14, 15],
       hp: "60HP"
     },
-    "SYS-302-7548BS0B": {
+    {
+      partNumber: "SYS-302-7548BS0B",
       name: "Eurovac III - Double 30HP & 48\" Sep Detail Vacuum System",
       price: 48025.00,
       bays: [14, 15],
       hp: "Dual 30HP"
     },
-    "VAC-DUAL-40HP": {
+    {
+      partNumber: "VAC-DUAL-40HP",
       name: "Eurovac III Double 40 HP & 54\" Bag Separator (20-22 Drops)",
       price: 50303.00,
       bays: [16, 17, 18, 19, 20, 21, 22],
       hp: "Dual 40HP"
     }
-  },
+  ],
   vfdControls: {
     "20HP": {
       "460V-Indoor": { partNumber: "CPA-VFD-11204602", price: 7740.00 },
@@ -140,19 +151,36 @@ const priceData = {
       "208V-Outdoor": { partNumber: "CPA-VFD-12402302", price: 15195.00 }
     }
   },
-  pipingPackages: {
-    5: { partNumber: "SYS-050-205GAR05", price: 1330.00 },
-    6: { partNumber: "SYS-050-205GAR06", price: 1441.00 },
-    7: { partNumber: "SYS-050-205GAR07", price: 1441.00 },
-    8: { partNumber: "SYS-050-205GAR08", price: 1441.00 },
-    9: { partNumber: "SYS-050-205GAR09", price: 1441.00 },
-    10: { partNumber: "SYS-050-205GAR10", price: 1441.00 },
-    11: { partNumber: "SYS-050-205GAR11", price: 1555.00 },
-    12: { partNumber: "SYS-050-205GAR12", price: 1555.00 },
-    13: { partNumber: "SYS-050-205GAR13", price: 1555.00 },
-    14: { partNumber: "SYS-050-205GAR14", price: 1555.00 },
-    15: { partNumber: "SYS-050-205GAR15", price: 1555.00 }
-  },
+  workstations: [
+    {
+      partNumber: "SYS-050-205GAR05",
+      name: "VAC-ALUM-05-WORKSTATION - Central Vac Line Kit (For 1-5 Bays)",
+      price: 1330.00,
+      minBays: 1,
+      maxBays: 5
+    },
+    {
+      partNumber: "SYS-050-205GAR10",
+      name: "VAC-ALUM-10-WORKSTATION - Central Vac Line Kit (For 6-10 Bays)",
+      price: 1371.00,
+      minBays: 6,
+      maxBays: 10
+    },
+    {
+      partNumber: "SYS-050-205GAR15",
+      name: "VAC-ALUM-15-WORKSTATION - Central Vac Line Kit (For 11-15 Bays)",
+      price: 1555.00,
+      minBays: 11,
+      maxBays: 15
+    },
+    {
+      partNumber: "SYS-050-205GAR20",
+      name: "VAC-ALUM-20-WORKSTATION - Central Vac Line Kit (For 16-20 Bays)",
+      price: 1650.00,
+      minBays: 16,
+      maxBays: 20
+    }
+  ],
   components: {
     arches: {
       "VA5129A-1": { name: "Single Vacuum Canopy Arch, 5\" Round Post", price: 4066.00 },
@@ -172,8 +200,8 @@ const priceData = {
     tools: {
       crevice: {
         "VAC-CREVICE-TOOL": { name: "Crevice Tool for 1-1/2\" Vacuum Hose", price: 7.80 },
-        "VA5129W": { name: "Single Tool Holster Bracket", price: 241.00 },
-        "VA3352WS": { name: "Crevice Tool Holster, Black", price: 114.00 }
+        "VA3352WS": { name: "Crevice Tool Holster, Black", price: 114.00 },
+        "VA5129W": { name: "Single Tool Holster Bracket", price: 241.00 }
       },
       claw: {
         "VAC-CLAW-NOZ": { name: "Claw Nozzle, 13\"Lg for 1-1/2\" Vacuum Hose", price: 7.20 },
@@ -184,14 +212,6 @@ const priceData = {
     hoses: {
       "VAC-HOSE-150": { name: "1-1/2\" Black Vacuum Hose", pricePerFoot: 3.40 },
       "VAC-HOSE-2IN": { name: "2\" Black Vacuum Hose", pricePerFoot: 4.50 }
-    }
-  },
-  workstations: {
-    "VAC-ALUM-6-10": {
-      name: "Central Vac Line Kit: Post/Arch Aluminum (6-10 Bays)",
-      price: 1371.00,
-      minBays: 6,
-      maxBays: 10
     }
   },
   tubeBends: {
@@ -208,63 +228,72 @@ const VacuumQuoteCalculator = () => {
   const [toolPreference, setToolPreference] = useState('half');
   const [voltage, setVoltage] = useState('460V');
   const [vfdType, setVfdType] = useState('Indoor');
-  const [centralUnitType, setCentralUnitType] = useState('single');
+  const [selectedCentralUnit, setSelectedCentralUnit] = useState('');
+  const [availableCentralUnits, setAvailableCentralUnits] = useState([]);
   const [quote, setQuote] = useState(null);
-  const [showPriceEditor, setShowPriceEditor] = useState(false);
 
   const roundToNearest50 = (num) => {
     return Math.ceil(num / 50) * 50;
   };
 
-  const selectCentralUnit = (totalArches, unitType) => {
-    const units = Object.entries(priceData.centralUnits);
-    
-    for (const [key, unit] of units) {
+  const getAvailableCentralUnits = (totalArches) => {
+    const units = priceData.centralUnits.filter(unit => {
       const baysArray = Array.isArray(unit.bays) ? unit.bays : [unit.bays];
-      const isDual = unit.hp.includes('Dual');
-      
-      if (baysArray.includes(totalArches)) {
-        if ((unitType === 'dual' && isDual) || (unitType === 'single' && !isDual)) {
-          return { partNumber: key, ...unit };
-        }
-      }
-    }
+      return baysArray.includes(totalArches);
+    });
     
-    for (const [key, unit] of units) {
-      const baysArray = Array.isArray(unit.bays) ? unit.bays : [unit.bays];
-      if (baysArray.includes(totalArches)) {
-        return { partNumber: key, ...unit };
-      }
-    }
-    
-    const lastUnit = units[units.length - 1];
-    return { partNumber: lastUnit[0], ...lastUnit[1] };
+    // Sort to show single pump options first, then dual pump options
+    return units.sort((a, b) => {
+      const aIsDual = a.hp.includes('Dual');
+      const bIsDual = b.hp.includes('Dual');
+      if (aIsDual === bIsDual) return 0;
+      return aIsDual ? 1 : -1;
+    });
   };
 
-  const selectWorkstation = (spotsPerRow, totalSpots) => {
-    const stations = Object.entries(priceData.workstations);
-    for (const [key, station] of stations) {
+  const selectWorkstation = (spotsPerRow) => {
+    for (const station of priceData.workstations) {
       if (spotsPerRow >= station.minBays && spotsPerRow <= station.maxBays) {
-        return { partNumber: key, ...station };
+        return station;
       }
     }
-    const lastStation = stations[stations.length - 1];
-    return { partNumber: lastStation[0], ...lastStation[1] };
+    return priceData.workstations[priceData.workstations.length - 1];
   };
+
+  useEffect(() => {
+    // Total BAYS (parking spots) is what the price list uses
+    const totalBays = rows * spotsPerRow;
+    
+    const units = getAvailableCentralUnits(totalBays);
+    setAvailableCentralUnits(units);
+    
+    if (units.length > 0 && !selectedCentralUnit) {
+      setSelectedCentralUnit(units[0].partNumber);
+    } else if (units.length > 0 && !units.find(u => u.partNumber === selectedCentralUnit)) {
+      setSelectedCentralUnit(units[0].partNumber);
+    }
+  }, [rows, spotsPerRow, selectedCentralUnit]);
 
   const calculateQuote = () => {
     const totalSpots = rows * spotsPerRow;
-    const singleDrops = rows * 2;
-    const dualDrops = (spotsPerRow - 1) * rows;
-    const totalArches = singleDrops + dualDrops;
-    const totalDrops = (dualDrops * 2) + singleDrops;
+    
+    const singleArchesPerRow = 2;
+    const dualArchesPerRow = spotsPerRow - 1;
+    const singleDrops = singleArchesPerRow * rows;
+    const dualDrops = dualArchesPerRow * rows;
+    const totalArches = (singleArchesPerRow + dualArchesPerRow) * rows;
+    
+    const totalDrops = (dualArchesPerRow * 2 + singleArchesPerRow) * rows;
 
-    const centralUnit = selectCentralUnit(totalArches, centralUnitType);
+    const centralUnit = priceData.centralUnits.find(u => u.partNumber === selectedCentralUnit);
+    if (!centralUnit) {
+      alert('Please select a central unit');
+      return;
+    }
+
     const vfdKey = `${voltage}-${vfdType}`;
     const vfd = priceData.vfdControls[centralUnit.hp]?.[vfdKey] || { partNumber: "N/A", price: 0 };
-    const workstation = selectWorkstation(spotsPerRow, totalSpots);
-    
-    const pipingPkg = priceData.pipingPackages[totalArches] || priceData.pipingPackages[15];
+    const workstation = selectWorkstation(spotsPerRow);
 
     const hose150Length = roundToNearest50(totalDrops * 25);
     const hose2Length = roundToNearest50(totalArches * 5);
@@ -303,16 +332,6 @@ const VacuumQuoteCalculator = () => {
       unitPrice: tubeBends.price,
       total: tubeBends.price * 2
     });
-
-    if (pipingPkg) {
-      lineItems.push({
-        partNumber: pipingPkg.partNumber,
-        description: `Aluminum Piping Package for ${totalArches} Arch connections`,
-        qty: 1,
-        unitPrice: pipingPkg.price,
-        total: pipingPkg.price
-      });
-    }
 
     lineItems.push({
       partNumber: "VA5129A-1",
@@ -435,9 +454,9 @@ const VacuumQuoteCalculator = () => {
 
     let csvContent = "Part Number,Description,Quantity,Unit Price,Total\n";
     quote.lineItems.forEach(item => {
-      csvContent += `"${item.partNumber}","${item.description}",${item.qty},${item.unitPrice.toFixed(2)},${item.total.toFixed(2)}\n`;
+      csvContent += `"${item.partNumber}","${item.description}",${item.qty},$${item.unitPrice.toFixed(2)},$${item.total.toFixed(2)}\n`;
     });
-    csvContent += `\n,,,,Subtotal,${quote.subtotal.toFixed(2)}`;
+    csvContent += `\n,,,,Subtotal,$${quote.subtotal.toFixed(2)}`;
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
@@ -467,13 +486,6 @@ const VacuumQuoteCalculator = () => {
               <Calculator className="w-8 h-8 text-indigo-600" />
               <h1 className="text-3xl font-bold text-gray-800">Vacuum System Quote Calculator</h1>
             </div>
-            <button
-              onClick={() => setShowPriceEditor(!showPriceEditor)}
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors"
-            >
-              <Settings className="w-5 h-5" />
-              {showPriceEditor ? 'Hide' : 'Show'} Prices
-            </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -531,6 +543,33 @@ const VacuumQuoteCalculator = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
+                Central Unit ({availableCentralUnits.length} option{availableCentralUnits.length !== 1 ? 's' : ''} available)
+              </label>
+              <select
+                value={selectedCentralUnit}
+                onChange={(e) => setSelectedCentralUnit(e.target.value)}
+                disabled={availableCentralUnits.length === 0}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
+              >
+                {availableCentralUnits.length === 0 ? (
+                  <option value="">No units available for this configuration</option>
+                ) : (
+                  availableCentralUnits.map(unit => (
+                    <option key={unit.partNumber} value={unit.partNumber}>
+                      {unit.hp} ({unit.partNumber}) - ${unit.price.toLocaleString()}
+                    </option>
+                  ))
+                )}
+              </select>
+              {availableCentralUnits.length === 0 && (
+                <p className="mt-1 text-xs text-red-600">
+                  Total bays: {rows * spotsPerRow} - Please adjust configuration
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Tool Preference
               </label>
               <select
@@ -541,20 +580,6 @@ const VacuumQuoteCalculator = () => {
                 <option value="half">50/50 (Crevice + Claw)</option>
                 <option value="crevice">Crevice Only</option>
                 <option value="claw">Claw Only</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Central Unit Type
-              </label>
-              <select
-                value={centralUnitType}
-                onChange={(e) => setCentralUnitType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
-              >
-                <option value="single">Single Pump (Preferred)</option>
-                <option value="dual">Dual Pump (Preferred)</option>
               </select>
             </div>
 
@@ -662,23 +687,11 @@ const VacuumQuoteCalculator = () => {
                 </tbody>
                 <tfoot>
                   <tr className="bg-indigo-50 border-t-2 border-indigo-200">
-                    <td colSpan="5" className="px-4 py-4 text-right text-lg font-bold text-gray-800">Subtotal:</td>
-                    <td className="px-4 py-4 text-right text-xl font-bold text-indigo-600">${quote.subtotal.toFixed(2)}</td>
+                    <td colSpan="4" className="px-4 py-4 text-right text-lg font-bold text-gray-800">Subtotal:</td>
+                    <td colSpan="2" className="px-4 py-4 text-right text-xl font-bold text-indigo-600">${quote.subtotal.toFixed(2)}</td>
                   </tr>
                 </tfoot>
               </table>
-            </div>
-          </div>
-        )}
-
-        {showPriceEditor && (
-          <div className="bg-white rounded-lg shadow-xl p-8 mt-6">
-            <h3 className="text-xl font-bold text-gray-800 mb-4">Price Reference</h3>
-            <p className="text-sm text-gray-600 mb-4">
-              All prices are loaded from the 2025 AVW Price List. To modify prices, update the JSON structure in the code.
-            </p>
-            <div className="bg-gray-50 p-4 rounded-lg font-mono text-xs overflow-auto max-h-96 text-black">
-              <pre>{JSON.stringify(priceData, null, 2)}</pre>
             </div>
           </div>
         )}
