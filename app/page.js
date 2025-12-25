@@ -1,154 +1,154 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import { Calculator, Download, Trash2 } from 'lucide-react';
+import { Calculator, Download, Trash2, Plus, X } from 'lucide-react';
 
 // Complete price data from 2025 AVW Price List
 const priceData = {
   centralUnits: [
     {
-      partNumber: "SYS-20C-7030BS0B",
+      partNumber: "VAC-20HP",
       name: "Eurovac III - 20HP & 30\" Sep Detail Vacuum System",
       price: 17360.00,
-      bays: 5,
+      minBays: 5,
+      maxBays: 5,
       hp: "20HP"
     },
     {
-      partNumber: "SYS-25C-6534BS0B",
+      partNumber: "VAC-25HP",
       name: "Eurovac III - 25HP & 34\" Sep Detail Vacuum System",
       price: 19370.00,
-      bays: 6,
+      minBays: 6,
+      maxBays: 6,
       hp: "25HP"
     },
     {
-      partNumber: "SYS-30C-7038BS0B",
+      partNumber: "VAC-30HP",
       name: "Eurovac III - 30HP & 38\" Sep Detail Vacuum System",
       price: 24213.00,
-      bays: [7, 8],
+      minBays: 7,
+      maxBays: 8,
       hp: "30HP"
     },
     {
-      partNumber: "SYS-152-7038BS0B",
+      partNumber: "VAC-DUAL-15HP",
       name: "Eurovac III - Double 15HP & 38\" Sep Detail Vacuum System",
       price: 28760.00,
-      bays: [7, 8],
+      minBays: 7,
+      maxBays: 8,
       hp: "Dual 15HP"
     },
     {
-      partNumber: "SYS-40C-7042BS0S",
+      partNumber: "VAC-40HP",
       name: "Eurovac III - 40HP & 42\" Sep Detail Vacuum System",
       price: 28329.00,
-      bays: [9, 10],
+      minBays: 9,
+      maxBays: 10,
       hp: "40HP"
     },
     {
-      partNumber: "SYS-202-7038BS0B",
+      partNumber: "VAC-DUAL-20HP",
       name: "Eurovac III - Double 20HP & 38\" Sep Detail Vacuum System",
       price: 34370.00,
-      bays: [9, 10],
+      minBays: 9,
+      maxBays: 10,
       hp: "Dual 20HP"
     },
     {
-      partNumber: "SYS-50C-7542BS0S",
+      partNumber: "VAC-50HP",
       name: "Eurovac III - 50HP & 42\" Sep Detail Vacuum System",
       price: 34320.00,
-      bays: [11, 12, 13],
+      minBays: 11,
+      maxBays: 13,
       hp: "50HP"
     },
     {
-      partNumber: "SYS-252-7042BS0B",
+      partNumber: "VAC-DUAL-25HP",
       name: "Eurovac III - Double 25HP & 42\" Sep Detail Vacuum System",
       price: 40545.00,
-      bays: [11, 12, 13],
+      minBays: 11,
+      maxBays: 13,
       hp: "Dual 25HP"
     },
     {
-      partNumber: "SYS-60C-7548BS0S",
+      partNumber: "VAC-60HP",
       name: "Eurovac III - 60HP & 48\" Sep Detail Vacuum System",
       price: 40210.00,
-      bays: [14, 15],
+      minBays: 14,
+      maxBays: 15,
       hp: "60HP"
     },
     {
-      partNumber: "SYS-302-7548BS0B",
+      partNumber: "VAC-DUAL-30HP",
       name: "Eurovac III - Double 30HP & 48\" Sep Detail Vacuum System",
       price: 48025.00,
-      bays: [14, 15],
+      minBays: 14,
+      maxBays: 15,
       hp: "Dual 30HP"
     },
     {
       partNumber: "VAC-DUAL-40HP",
       name: "Eurovac III Double 40 HP & 54\" Bag Separator (20-22 Drops)",
       price: 50303.00,
-      bays: [16, 17, 18, 19, 20, 21, 22],
+      minBays: 16,
+      maxBays: 22,
       hp: "Dual 40HP"
     }
   ],
   vfdControls: {
     "20HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-11204602", price: 7740.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-12204602", price: 9720.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-11202302", price: 8215.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-12202302", price: 10370.00 }
+      "230/460": { partNumber: "CPA-VFD-12204602", price: 9720.00 },
+      "575": { partNumber: "CPA-VFD-12205752", price: 9720.00 },
+      "380": { partNumber: "CPA-VFD-12203802", price: 9720.00 }
     },
     "25HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-11254602", price: 9170.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-12254602", price: 11145.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-11252302", price: 9275.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-12252302", price: 11980.00 }
+      "230/460": { partNumber: "CPA-VFD-12254602", price: 11145.00 },
+      "575": { partNumber: "CPA-VFD-12255752", price: 11145.00 },
+      "380": { partNumber: "CPA-VFD-12253802", price: 11145.00 }
     },
     "30HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-11304602", price: 10245.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-12304602", price: 12420.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-11302302", price: 11185.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-12302302", price: 13895.00 }
+      "230/460": { partNumber: "CPA-VFD-12304602", price: 12420.00 },
+      "575": { partNumber: "CPA-VFD-12305752", price: 12420.00 },
+      "380": { partNumber: "CPA-VFD-12303802", price: 12420.00 }
     },
     "40HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-11404602", price: 11760.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-12404602", price: 13390.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-11402302", price: 12485.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-12402302", price: 15195.00 }
+      "230/460": { partNumber: "CPA-VFD-12404602", price: 13390.00 },
+      "575": { partNumber: "CPA-VFD-12405752", price: 13390.00 },
+      "380": { partNumber: "CPA-VFD-12403802", price: 13390.00 }
     },
     "50HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-11504602", price: 13395.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-12504602", price: 16165.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-11502302", price: 15275.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-12502302", price: 18505.00 }
+      "230/460": { partNumber: "CPA-VFD-12504602", price: 16165.00 },
+      "575": { partNumber: "CPA-VFD-12505752", price: 16165.00 },
+      "380": { partNumber: "CPA-VFD-12503802", price: 16165.00 }
     },
     "60HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-11604602", price: 15615.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-12604602", price: 18385.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-11602302", price: 17805.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-12602302", price: 21035.00 }
+      "230/460": { partNumber: "CPA-VFD-12604602", price: 18385.00 },
+      "575": { partNumber: "CPA-VFD-12605752", price: 18385.00 },
+      "380": { partNumber: "CPA-VFD-12603802", price: 18385.00 }
     },
     "Dual 15HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-111546022", price: 14103.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-111546023", price: 18063.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-111546022", price: 14103.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-111546023", price: 18063.00 }
+      "230/460": { partNumber: "CPA-VFD-111546023", price: 18063.00 },
+      "575": { partNumber: "CPA-VFD-111545753", price: 18063.00 },
+      "380": { partNumber: "CPA-VFD-111543803", price: 18063.00 }
     },
     "Dual 20HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-112046022", price: 15953.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-112046023", price: 19913.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-112046022", price: 16903.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-112046023", price: 21213.00 }
+      "230/460": { partNumber: "CPA-VFD-112046023", price: 19913.00 },
+      "575": { partNumber: "CPA-VFD-112045753", price: 19913.00 },
+      "380": { partNumber: "CPA-VFD-112043803", price: 19913.00 }
     },
     "Dual 25HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-112546022", price: 18813.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-112546023", price: 21630.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-112520822", price: 19023.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-112520823", price: 24433.00 }
+      "230/460": { partNumber: "CPA-VFD-112546023", price: 21630.00 },
+      "575": { partNumber: "CPA-VFD-112545753", price: 21630.00 },
+      "380": { partNumber: "CPA-VFD-112543803", price: 21630.00 }
     },
     "Dual 30HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-113046022", price: 20963.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-113046023", price: 25313.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-113020822", price: 22843.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-113020823", price: 28263.00 }
+      "230/460": { partNumber: "CPA-VFD-113046023", price: 25313.00 },
+      "575": { partNumber: "CPA-VFD-113045753", price: 25313.00 },
+      "380": { partNumber: "CPA-VFD-113043803", price: 25313.00 }
     },
     "Dual 40HP": {
-      "460V-Indoor": { partNumber: "CPA-VFD-11404602", price: 11760.00 },
-      "460V-Outdoor": { partNumber: "CPA-VFD-12404602", price: 13390.00 },
-      "208V-Indoor": { partNumber: "CPA-VFD-11402302", price: 12485.00 },
-      "208V-Outdoor": { partNumber: "CPA-VFD-12402302", price: 15195.00 }
+      "230/460": { partNumber: "CPA-VFD-12404602", price: 13390.00 },
+      "575": { partNumber: "CPA-VFD-12405752", price: 13390.00 },
+      "380": { partNumber: "CPA-VFD-12403802", price: 13390.00 }
     }
   },
   workstations: [
@@ -223,26 +223,20 @@ const priceData = {
 };
 
 const VacuumQuoteCalculator = () => {
-  const [rows, setRows] = useState(2);
-  const [spotsPerRow, setSpotsPerRow] = useState(10);
+  const [rows, setRows] = useState([{ spots: 10, centralUnit: '' }]);
   const [toolPreference, setToolPreference] = useState('half');
-  const [voltage, setVoltage] = useState('460V');
-  const [vfdType, setVfdType] = useState('Indoor');
-  const [selectedCentralUnit, setSelectedCentralUnit] = useState('');
-  const [availableCentralUnits, setAvailableCentralUnits] = useState([]);
+  const [siteVoltage, setSiteVoltage] = useState('230/460');
   const [quote, setQuote] = useState(null);
 
   const roundToNearest50 = (num) => {
     return Math.ceil(num / 50) * 50;
   };
 
-  const getAvailableCentralUnits = (totalArches) => {
+  const getAvailableCentralUnits = (spots) => {
     const units = priceData.centralUnits.filter(unit => {
-      const baysArray = Array.isArray(unit.bays) ? unit.bays : [unit.bays];
-      return baysArray.includes(totalArches);
+      return spots >= unit.minBays && spots <= unit.maxBays;
     });
     
-    // Sort to show single pump options first, then dual pump options
     return units.sort((a, b) => {
       const aIsDual = a.hp.includes('Dual');
       const bIsDual = b.hp.includes('Dual');
@@ -260,95 +254,139 @@ const VacuumQuoteCalculator = () => {
     return priceData.workstations[priceData.workstations.length - 1];
   };
 
-  useEffect(() => {
-    // Total BAYS (parking spots) is what the price list uses
-    const totalBays = rows * spotsPerRow;
-    
-    const units = getAvailableCentralUnits(totalBays);
-    setAvailableCentralUnits(units);
-    
-    if (units.length > 0 && !selectedCentralUnit) {
-      setSelectedCentralUnit(units[0].partNumber);
-    } else if (units.length > 0 && !units.find(u => u.partNumber === selectedCentralUnit)) {
-      setSelectedCentralUnit(units[0].partNumber);
+  const addRow = () => {
+    setRows([...rows, { spots: 10, centralUnit: '' }]);
+  };
+
+  const removeRow = (index) => {
+    if (rows.length > 1) {
+      const newRows = rows.filter((_, i) => i !== index);
+      setRows(newRows);
     }
-  }, [rows, spotsPerRow, selectedCentralUnit]);
+  };
+
+  const updateRowSpots = (index, spots) => {
+    const newRows = [...rows];
+    newRows[index].spots = spots;
+    newRows[index].centralUnit = ''; // Reset central unit when spots change
+    setRows(newRows);
+  };
+
+  const updateRowCentralUnit = (index, centralUnit) => {
+    const newRows = [...rows];
+    newRows[index].centralUnit = centralUnit;
+    setRows(newRows);
+  };
+
+  useEffect(() => {
+    // Auto-select central units when spots change
+    const newRows = rows.map(row => {
+      if (!row.centralUnit && row.spots > 0) {
+        const availableUnits = getAvailableCentralUnits(row.spots);
+        if (availableUnits.length > 0) {
+          return { ...row, centralUnit: availableUnits[0].partNumber };
+        }
+      }
+      return row;
+    });
+    
+    if (JSON.stringify(newRows) !== JSON.stringify(rows)) {
+      setRows(newRows);
+    }
+  }, [rows]);
 
   const calculateQuote = () => {
-    const totalSpots = rows * spotsPerRow;
-    
-    const singleArchesPerRow = 2;
-    const dualArchesPerRow = spotsPerRow - 1;
-    const singleDrops = singleArchesPerRow * rows;
-    const dualDrops = dualArchesPerRow * rows;
-    const totalArches = (singleArchesPerRow + dualArchesPerRow) * rows;
-    
-    const totalDrops = (dualArchesPerRow * 2 + singleArchesPerRow) * rows;
-
-    const centralUnit = priceData.centralUnits.find(u => u.partNumber === selectedCentralUnit);
-    if (!centralUnit) {
-      alert('Please select a central unit');
-      return;
-    }
-
-    const vfdKey = `${voltage}-${vfdType}`;
-    const vfd = priceData.vfdControls[centralUnit.hp]?.[vfdKey] || { partNumber: "N/A", price: 0 };
-    const workstation = selectWorkstation(spotsPerRow);
-
-    const hose150Length = roundToNearest50(totalDrops * 25);
-    const hose2Length = roundToNearest50(totalArches * 5);
-
     let lineItems = [];
+    let totalSpots = 0;
+    let totalSingleArches = 0;
+    let totalDualArches = 0;
+    let totalArches = 0;
+    let totalDrops = 0;
 
-    lineItems.push({
-      partNumber: centralUnit.partNumber,
-      description: centralUnit.name,
-      qty: 1,
-      unitPrice: centralUnit.price,
-      total: centralUnit.price
+    // Add central units and VFDs for each row
+    rows.forEach((row, index) => {
+      const centralUnit = priceData.centralUnits.find(u => u.partNumber === row.centralUnit);
+      if (!centralUnit) {
+        alert(`Please select a central unit for Row ${index + 1}`);
+        return;
+      }
+
+      totalSpots += row.spots;
+      
+      // Calculate arches for this row
+      const singleArchesThisRow = 2;
+      const dualArchesThisRow = row.spots - 1;
+      const archesThisRow = singleArchesThisRow + dualArchesThisRow;
+      const dropsThisRow = (dualArchesThisRow * 2) + singleArchesThisRow;
+      
+      totalSingleArches += singleArchesThisRow;
+      totalDualArches += dualArchesThisRow;
+      totalArches += archesThisRow;
+      totalDrops += dropsThisRow;
+
+      // Add central unit
+      lineItems.push({
+        partNumber: centralUnit.partNumber,
+        description: `${centralUnit.name} (Row ${index + 1})`,
+        qty: 1,
+        unitPrice: centralUnit.price,
+        total: centralUnit.price
+      });
+
+      // Add VFD
+      const vfd = priceData.vfdControls[centralUnit.hp]?.[siteVoltage];
+      if (vfd) {
+        lineItems.push({
+          partNumber: vfd.partNumber,
+          description: `${centralUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel (Row ${index + 1})`,
+          qty: 1,
+          unitPrice: vfd.price,
+          total: vfd.price
+        });
+      }
     });
 
-    lineItems.push({
-      partNumber: vfd.partNumber,
-      description: `${centralUnit.hp} - ${voltage} ${vfdType} VFD Control Panel`,
-      qty: 1,
-      unitPrice: vfd.price,
-      total: vfd.price
+    // Add workstations
+    rows.forEach((row, index) => {
+      const workstation = selectWorkstation(row.spots);
+      lineItems.push({
+        partNumber: workstation.partNumber,
+        description: `${workstation.name} (Row ${index + 1})`,
+        qty: row.spots,
+        unitPrice: workstation.price,
+        total: workstation.price * row.spots
+      });
     });
 
-    lineItems.push({
-      partNumber: workstation.partNumber,
-      description: workstation.name,
-      qty: totalSpots,
-      unitPrice: workstation.price,
-      total: workstation.price * totalSpots
-    });
-
+    // Add tube bends (2 per system)
     const tubeBends = priceData.tubeBends["TUBEBENDS-10IN"];
     lineItems.push({
       partNumber: "TUBEBENDS-10IN",
       description: tubeBends.name,
-      qty: 2,
+      qty: rows.length * 2,
       unitPrice: tubeBends.price,
-      total: tubeBends.price * 2
+      total: tubeBends.price * rows.length * 2
     });
 
+    // Add single arches
     lineItems.push({
       partNumber: "VA5129A-1",
       description: priceData.components.arches["VA5129A-1"].name,
-      qty: singleDrops,
+      qty: totalSingleArches,
       unitPrice: priceData.components.arches["VA5129A-1"].price,
-      total: priceData.components.arches["VA5129A-1"].price * singleDrops
+      total: priceData.components.arches["VA5129A-1"].price * totalSingleArches
     });
 
+    // Add dual arches
     lineItems.push({
       partNumber: "VA5129A-2",
       description: priceData.components.arches["VA5129A-2"].name,
-      qty: dualDrops,
+      qty: totalDualArches,
       unitPrice: priceData.components.arches["VA5129A-2"].price,
-      total: priceData.components.arches["VA5129A-2"].price * dualDrops
+      total: priceData.components.arches["VA5129A-2"].price * totalDualArches
     });
 
+    // Add arch components
     Object.entries(priceData.components.archComponents).forEach(([key, item]) => {
       lineItems.push({
         partNumber: key,
@@ -359,6 +397,7 @@ const VacuumQuoteCalculator = () => {
       });
     });
 
+    // Add drop components
     Object.entries(priceData.components.dropComponents).forEach(([key, item]) => {
       lineItems.push({
         partNumber: key,
@@ -369,6 +408,7 @@ const VacuumQuoteCalculator = () => {
       });
     });
 
+    // Add tools based on preference
     if (toolPreference === 'half') {
       const halfDrops = totalDrops / 2;
       
@@ -413,6 +453,10 @@ const VacuumQuoteCalculator = () => {
       });
     }
 
+    // Add hoses
+    const hose150Length = roundToNearest50(totalDrops * 25);
+    const hose2Length = roundToNearest50(totalArches * 5);
+
     const hose150 = priceData.components.hoses["VAC-HOSE-150"];
     lineItems.push({
       partNumber: "VAC-HOSE-150",
@@ -435,14 +479,13 @@ const VacuumQuoteCalculator = () => {
 
     setQuote({
       config: {
-        rows,
-        spotsPerRow,
+        rows: rows.length,
         totalSpots,
-        singleDrops,
-        dualDrops,
+        totalSingleArches,
+        totalDualArches,
         totalArches,
         totalDrops,
-        centralUnit: centralUnit.name
+        siteVoltage
       },
       lineItems,
       subtotal
@@ -462,7 +505,7 @@ const VacuumQuoteCalculator = () => {
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `vacuum-quote-${rows}x${spotsPerRow}.csv`;
+    a.download = `vacuum-quote-${rows.length}rows.csv`;
     a.click();
   };
 
@@ -488,84 +531,90 @@ const VacuumQuoteCalculator = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Number of Rows
-              </label>
-              <input
-                type="number"
-                min="1"
-                value={rows}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === '' || value === '0') {
-                    setRows('');
-                  } else {
-                    const parsed = parseInt(value);
-                    setRows(parsed >= 1 ? parsed : 1);
-                  }
-                }}
-                onBlur={(e) => {
-                  if (e.target.value === '' || parseInt(e.target.value) < 1) {
-                    setRows(1);
-                  }
-                }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
-              />
-            </div>
+          <div className="space-y-6 mb-6">
+            {rows.map((row, index) => {
+              const availableUnits = getAvailableCentralUnits(row.spots);
+              return (
+                <div key={index} className="p-4 border-2 border-indigo-200 rounded-lg bg-indigo-50">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-gray-800">Row {index + 1}</h3>
+                    {rows.length > 1 && (
+                      <button
+                        onClick={() => removeRow(index)}
+                        className="text-red-600 hover:text-red-800 hover:bg-red-100 p-2 rounded transition-colors"
+                        title="Remove row"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    )}
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Parking Spots
+                      </label>
+                      <input
+                        type="number"
+                        min="2"
+                        value={row.spots}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 2;
+                          updateRowSpots(index, value >= 2 ? value : 2);
+                        }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+                      />
+                    </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Parking Spots Per Row
-              </label>
-              <input
-                type="number"
-                min="2"
-                value={spotsPerRow}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === '' || value === '0' || value === '1') {
-                    setSpotsPerRow('');
-                  } else {
-                    const parsed = parseInt(value);
-                    setSpotsPerRow(parsed >= 2 ? parsed : 2);
-                  }
-                }}
-                onBlur={(e) => {
-                  if (e.target.value === '' || parseInt(e.target.value) < 2) {
-                    setSpotsPerRow(2);
-                  }
-                }}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
-              />
-            </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Central Unit ({availableUnits.length} option{availableUnits.length !== 1 ? 's' : ''})
+                      </label>
+                      <select
+                        value={row.centralUnit}
+                        onChange={(e) => updateRowCentralUnit(index, e.target.value)}
+                        disabled={availableUnits.length === 0}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
+                      >
+                        {availableUnits.length === 0 ? (
+                          <option value="">No units available</option>
+                        ) : (
+                          availableUnits.map(unit => (
+                            <option key={unit.partNumber} value={unit.partNumber}>
+                              {unit.partNumber} ({unit.minBays}-{unit.maxBays} spots)
+                            </option>
+                          ))
+                        )}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
 
+            <button
+              onClick={addRow}
+              className="w-full py-3 border-2 border-dashed border-indigo-300 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:border-indigo-400 transition-colors flex items-center justify-center gap-2"
+            >
+              <Plus className="w-5 h-5" />
+              Add Another Row
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Central Unit ({availableCentralUnits.length} option{availableCentralUnits.length !== 1 ? 's' : ''} available)
+                Site Voltage
               </label>
               <select
-                value={selectedCentralUnit}
-                onChange={(e) => setSelectedCentralUnit(e.target.value)}
-                disabled={availableCentralUnits.length === 0}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
+                value={siteVoltage}
+                onChange={(e) => setSiteVoltage(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
               >
-                {availableCentralUnits.length === 0 ? (
-                  <option value="">No units available for this configuration</option>
-                ) : (
-                  availableCentralUnits.map(unit => (
-                    <option key={unit.partNumber} value={unit.partNumber}>
-                      {unit.hp} ({unit.partNumber}) - ${unit.price.toLocaleString()}
-                    </option>
-                  ))
-                )}
+                <option value="230/460">230/460V (US Standard)</option>
+                <option value="575">575V (Canada)</option>
+                <option value="380">380V (Australia / Europe)</option>
               </select>
-              {availableCentralUnits.length === 0 && (
-                <p className="mt-1 text-xs text-red-600">
-                  Total bays: {rows * spotsPerRow} - Please adjust configuration
-                </p>
-              )}
             </div>
 
             <div>
@@ -580,34 +629,6 @@ const VacuumQuoteCalculator = () => {
                 <option value="half">50/50 (Crevice + Claw)</option>
                 <option value="crevice">Crevice Only</option>
                 <option value="claw">Claw Only</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Voltage
-              </label>
-              <select
-                value={voltage}
-                onChange={(e) => setVoltage(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
-              >
-                <option value="460V">460V</option>
-                <option value="208V">208V</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                VFD Type
-              </label>
-              <select
-                value={vfdType}
-                onChange={(e) => setVfdType(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
-              >
-                <option value="Indoor">Indoor</option>
-                <option value="Outdoor">Outdoor</option>
               </select>
             </div>
           </div>
@@ -636,8 +657,12 @@ const VacuumQuoteCalculator = () => {
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-indigo-50 rounded-lg">
               <div>
-                <p className="text-sm text-gray-600">Configuration</p>
-                <p className="text-xl font-bold text-indigo-600">{quote.config.rows} × {quote.config.spotsPerRow}</p>
+                <p className="text-sm text-gray-600">Total Rows</p>
+                <p className="text-xl font-bold text-indigo-600">{quote.config.rows}</p>
+              </div>
+              <div>
+                <p className="text-sm text-gray-600">Total Spots</p>
+                <p className="text-xl font-bold text-indigo-600">{quote.config.totalSpots}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Arches</p>
@@ -646,10 +671,6 @@ const VacuumQuoteCalculator = () => {
               <div>
                 <p className="text-sm text-gray-600">Total Drops</p>
                 <p className="text-xl font-bold text-indigo-600">{quote.config.totalDrops}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Spots</p>
-                <p className="text-xl font-bold text-indigo-600">{quote.config.totalSpots}</p>
               </div>
             </div>
 
