@@ -529,7 +529,7 @@ const VacuumQuoteCalculator = () => {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 flex-shrink-0 relative">
                 <Image
-                  src="/avw-logo.png"   // path is from /public
+                  src="/avw-logo.jpg"   // path is from /public
                   alt="Company Logo"
                   fill
                   className="object-contain"
