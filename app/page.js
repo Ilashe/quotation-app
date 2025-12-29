@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Calculator, Download, Trash2, Plus, X } from 'lucide-react';
+import { Calculator, Download, Trash2, Plus, X, Info } from 'lucide-react';
 
 // Complete price data from 2025 AVW Price List
 const priceData = {
@@ -196,294 +196,187 @@ const priceData = {
     },
     dropComponents: {
       "VA2567V": { name: "Vacuum Inlet Valve and 1-1/2\" Hose Connector Assembly", price: 92.20 },
-      "VAC-CUFFSWIVEL-150HX150T": { name: "Swivel Cuff, 1-1/2\" Vacuum Hose x 1-1/2\" Tube", price: 5.60 }
-    },
-    tools: {
-      crevice: {
-        "VAC-CREVICE-TOOL": { name: "Crevice Tool for 1-1/2\" Vacuum Hose", price: 7.80 },
-        "VA3352WS": { name: "Crevice Tool Holster, Black", price: 114.00 },
-        "VA5129W": { name: "Single Tool Holster Bracket", price: 241.00 }
-      },
-      claw: {
-        "VAC-CLAW-NOZ": { name: "Claw Nozzle, 13\"Lg for 1-1/2\" Vacuum Hose", price: 7.20 },
-        "VA5129WS": { name: "Claw Hanger, Two-Peg Style with PVC Flapper Valve", price: 175.00 },
-        "VA5129WL": { name: "\"L\" Claw Holder Bracket", price: 63.70 }
-      }
-    },
-    hoses: {
-      "VAC-HOSE-150": { name: "1-1/2\" Black Vacuum Hose", pricePerFoot: 3.40 },
-      "VAC-HOSE-2IN": { name: "2\" Black Vacuum Hose", pricePerFoot: 4.50 }
-    }
-  },
-  tubeBends: {
-    "TUBEBENDS-10IN": {
-      name: "10\" Galvanized Tube, Bends & Compression Couplings",
-      price: 2995.00
+      "VA6101D": { name: "6' Retractable Vacuum Hose w/Claw Tool, Black Neoprene", price: 197.00 },
+      "VA6101E": { name: "6' Retractable Vacuum Hose w/Crevice Tool, Black Neoprene", price: 192.00 }
     }
   }
 };
 
 const VacuumQuoteCalculator = () => {
-  const [rows, setRows] = useState([{ spots: 10 }]);
+  const [rows, setRows] = useState([{ id: 1, spots: 5 }]);
   const [centralUnit, setCentralUnit] = useState('');
-  const [toolPreference, setToolPreference] = useState('half');
   const [siteVoltage, setSiteVoltage] = useState('230/460');
+  const [toolPreference, setToolPreference] = useState('half');
   const [quote, setQuote] = useState(null);
 
-  const roundToNearest50 = (num) => {
-    return Math.ceil(num / 50) * 50;
-  };
+  const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
 
   const getAvailableCentralUnits = () => {
-    const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
-    
-    const units = priceData.centralUnits.filter(unit => {
-      return totalSpots >= unit.minBays && totalSpots <= unit.maxBays;
-    });
-    
-    return units.sort((a, b) => {
-      const aIsDual = a.hp.includes('Dual');
-      const bIsDual = b.hp.includes('Dual');
-      if (aIsDual === bIsDual) return 0;
-      return aIsDual ? 1 : -1;
-    });
+    return priceData.centralUnits.filter(unit => 
+      totalSpots >= unit.minBays && totalSpots <= unit.maxBays
+    );
   };
 
-  const selectWorkstation = (spotsPerRow) => {
-    for (const station of priceData.workstations) {
-      if (spotsPerRow >= station.minBays && spotsPerRow <= station.maxBays) {
-        return station;
+  useEffect(() => {
+    const availableUnits = getAvailableCentralUnits();
+    if (availableUnits.length > 0 && !centralUnit) {
+      setCentralUnit(availableUnits[0].partNumber);
+    } else if (availableUnits.length > 0) {
+      const isValid = availableUnits.some(unit => unit.partNumber === centralUnit);
+      if (!isValid) {
+        setCentralUnit(availableUnits[0].partNumber);
       }
     }
-    return priceData.workstations[priceData.workstations.length - 1];
-  };
+  }, [totalSpots]);
 
   const addRow = () => {
-    setRows([...rows, { spots: 10 }]);
+    setRows([...rows, { id: rows.length + 1, spots: 5 }]);
   };
 
   const removeRow = (index) => {
     if (rows.length > 1) {
-      const newRows = rows.filter((_, i) => i !== index);
-      setRows(newRows);
+      setRows(rows.filter((_, i) => i !== index));
     }
   };
 
-  const updateRowSpots = (index, spots) => {
+  const updateRowSpots = (index, value) => {
     const newRows = [...rows];
-    newRows[index].spots = spots;
+    newRows[index].spots = value;
     setRows(newRows);
-    setCentralUnit(''); // Reset central unit when spots change since total spots changed
   };
-
-  useEffect(() => {
-    // Auto-select central unit when total spots change
-    const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
-    if (!centralUnit && totalSpots > 0) {
-      const availableUnits = getAvailableCentralUnits();
-      if (availableUnits.length > 0) {
-        setCentralUnit(availableUnits[0].partNumber);
-      }
-    }
-  }, [rows, centralUnit]);
 
   const calculateQuote = () => {
-    let lineItems = [];
-    let totalSpots = 0;
-    let totalSingleArches = 0;
-    let totalDualArches = 0;
-    let totalArches = 0;
-    let totalDrops = 0;
-
-    // Get selected central unit
-    const selectedCentralUnit = priceData.centralUnits.find(u => u.partNumber === centralUnit);
-    if (!selectedCentralUnit) {
-      alert("Please select a central unit");
+    if (!centralUnit) {
+      alert('Please select a central unit');
       return;
     }
 
-    // Calculate total spots from all rows
-    totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
-    
-    // Validate that total spots are within central unit's capacity
-    if (totalSpots < selectedCentralUnit.minBays || totalSpots > selectedCentralUnit.maxBays) {
-      alert(`Total spots (${totalSpots}) are outside the range for selected central unit (${selectedCentralUnit.minBays}-${selectedCentralUnit.maxBays} spots)`);
+    const lineItems = [];
+    const totalArches = rows.length;
+    const totalDrops = totalSpots;
+
+    const selectedUnit = priceData.centralUnits.find(u => u.partNumber === centralUnit);
+    if (!selectedUnit) {
+      alert('Please select a valid central unit');
       return;
     }
 
-    // Calculate arches and drops for all rows combined
-    const singleArchesPerRow = 2;
-    totalSingleArches = rows.length * singleArchesPerRow;
-    
-    rows.forEach(row => {
-      totalDualArches += row.spots - 1;
-    });
-    
-    totalArches = totalSingleArches + totalDualArches;
-    totalDrops = (totalDualArches * 2) + totalSingleArches;
-
-    // Add central unit (only once)
     lineItems.push({
-      partNumber: selectedCentralUnit.partNumber,
-      description: selectedCentralUnit.name,
+      partNumber: selectedUnit.partNumber,
+      description: selectedUnit.name,
       qty: 1,
-      unitPrice: selectedCentralUnit.price,
-      total: selectedCentralUnit.price
+      unitPrice: selectedUnit.price,
+      total: selectedUnit.price
     });
 
-    // Add VFD (only once)
-    const vfd = priceData.vfdControls[selectedCentralUnit.hp]?.[siteVoltage];
-    if (vfd) {
+    const vfdControl = priceData.vfdControls[selectedUnit.hp]?.[siteVoltage];
+    if (vfdControl) {
       lineItems.push({
-        partNumber: vfd.partNumber,
-        description: `${selectedCentralUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel`,
+        partNumber: vfdControl.partNumber,
+        description: `${selectedUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel`,
         qty: 1,
-        unitPrice: vfd.price,
-        total: vfd.price
+        unitPrice: vfdControl.price,
+        total: vfdControl.price
       });
     }
 
-    // Add workstations for each row
+    const piping = priceData.workstations.find(w => 
+      totalSpots >= w.minBays && totalSpots <= w.maxBays
+    );
+    if (piping) {
+      lineItems.push({
+        partNumber: piping.partNumber,
+        description: piping.name,
+        qty: 1,
+        unitPrice: piping.price,
+        total: piping.price
+      });
+    }
+
     rows.forEach((row, index) => {
-      const workstation = selectWorkstation(row.spots);
-      lineItems.push({
-        partNumber: workstation.partNumber,
-        description: `${workstation.name} (Row ${index + 1})`,
-        qty: row.spots,
-        unitPrice: workstation.price,
-        total: workstation.price * row.spots
-      });
-    });
-
-    // Add tube bends (2 per system)
-    const tubeBends = priceData.tubeBends["TUBEBENDS-10IN"];
-    lineItems.push({
-      partNumber: "TUBEBENDS-10IN",
-      description: tubeBends.name,
-      qty: rows.length * 2,
-      unitPrice: tubeBends.price,
-      total: tubeBends.price * rows.length * 2
-    });
-
-    // Add single arches
-    lineItems.push({
-      partNumber: "VA5129A-1",
-      description: priceData.components.arches["VA5129A-1"].name,
-      qty: totalSingleArches,
-      unitPrice: priceData.components.arches["VA5129A-1"].price,
-      total: priceData.components.arches["VA5129A-1"].price * totalSingleArches
-    });
-
-    // Add dual arches
-    lineItems.push({
-      partNumber: "VA5129A-2",
-      description: priceData.components.arches["VA5129A-2"].name,
-      qty: totalDualArches,
-      unitPrice: priceData.components.arches["VA5129A-2"].price,
-      total: priceData.components.arches["VA5129A-2"].price * totalDualArches
-    });
-
-    // Add arch components
-    Object.entries(priceData.components.archComponents).forEach(([key, item]) => {
-      lineItems.push({
-        partNumber: key,
-        description: item.name,
-        qty: totalArches,
-        unitPrice: item.price,
-        total: item.price * totalArches
-      });
-    });
-
-    // Add drop components
-    Object.entries(priceData.components.dropComponents).forEach(([key, item]) => {
-      lineItems.push({
-        partNumber: key,
-        description: item.name,
-        qty: totalDrops,
-        unitPrice: item.price,
-        total: item.price * totalDrops
-      });
-    });
-
-    // Add tools based on preference
-    if (toolPreference === 'half') {
-      const halfDrops = totalDrops / 2;
+      const isDual = row.spots > 3;
+      const archType = isDual ? "VA5129A-2" : "VA5129A-1";
+      const arch = priceData.components.arches[archType];
       
-      Object.entries(priceData.components.tools.crevice).forEach(([key, item]) => {
-        lineItems.push({
-          partNumber: key,
-          description: item.name,
-          qty: halfDrops,
-          unitPrice: item.price,
-          total: item.price * halfDrops
-        });
+      lineItems.push({
+        partNumber: archType,
+        description: `${arch.name} (Row ${index + 1})`,
+        qty: 1,
+        unitPrice: arch.price,
+        total: arch.price
+      });
+    });
+
+    Object.entries(priceData.components.archComponents).forEach(([partNum, component]) => {
+      lineItems.push({
+        partNumber: partNum,
+        description: component.name,
+        qty: totalArches,
+        unitPrice: component.price,
+        total: component.price * totalArches
+      });
+    });
+
+    const inletValve = priceData.components.dropComponents["VA2567V"];
+    lineItems.push({
+      partNumber: "VA2567V",
+      description: inletValve.name,
+      qty: totalDrops,
+      unitPrice: inletValve.price,
+      total: inletValve.price * totalDrops
+    });
+
+    if (toolPreference === 'half') {
+      const clawCount = Math.ceil(totalDrops / 2);
+      const creviceCount = totalDrops - clawCount;
+
+      const clawHose = priceData.components.dropComponents["VA6101D"];
+      lineItems.push({
+        partNumber: "VA6101D",
+        description: clawHose.name,
+        qty: clawCount,
+        unitPrice: clawHose.price,
+        total: clawHose.price * clawCount
       });
 
-      Object.entries(priceData.components.tools.claw).forEach(([key, item]) => {
-        lineItems.push({
-          partNumber: key,
-          description: item.name,
-          qty: halfDrops,
-          unitPrice: item.price,
-          total: item.price * halfDrops
-        });
-      });
-    } else if (toolPreference === 'crevice') {
-      Object.entries(priceData.components.tools.crevice).forEach(([key, item]) => {
-        lineItems.push({
-          partNumber: key,
-          description: item.name,
-          qty: totalDrops,
-          unitPrice: item.price,
-          total: item.price * totalDrops
-        });
+      const creviceHose = priceData.components.dropComponents["VA6101E"];
+      lineItems.push({
+        partNumber: "VA6101E",
+        description: creviceHose.name,
+        qty: creviceCount,
+        unitPrice: creviceHose.price,
+        total: creviceHose.price * creviceCount
       });
     } else if (toolPreference === 'claw') {
-      Object.entries(priceData.components.tools.claw).forEach(([key, item]) => {
-        lineItems.push({
-          partNumber: key,
-          description: item.name,
-          qty: totalDrops,
-          unitPrice: item.price,
-          total: item.price * totalDrops
-        });
+      const clawHose = priceData.components.dropComponents["VA6101D"];
+      lineItems.push({
+        partNumber: "VA6101D",
+        description: clawHose.name,
+        qty: totalDrops,
+        unitPrice: clawHose.price,
+        total: clawHose.price * totalDrops
+      });
+    } else {
+      const creviceHose = priceData.components.dropComponents["VA6101E"];
+      lineItems.push({
+        partNumber: "VA6101E",
+        description: creviceHose.name,
+        qty: totalDrops,
+        unitPrice: creviceHose.price,
+        total: creviceHose.price * totalDrops
       });
     }
-
-    // Add hoses
-    const hose150Length = roundToNearest50(totalDrops * 25);
-    const hose2Length = roundToNearest50(totalArches * 5);
-
-    const hose150 = priceData.components.hoses["VAC-HOSE-150"];
-    lineItems.push({
-      partNumber: "VAC-HOSE-150",
-      description: `${hose150.name} (${hose150Length} ft)`,
-      qty: hose150Length,
-      unitPrice: hose150.pricePerFoot,
-      total: hose150.pricePerFoot * hose150Length
-    });
-
-    const hose2 = priceData.components.hoses["VAC-HOSE-2IN"];
-    lineItems.push({
-      partNumber: "VAC-HOSE-2IN",
-      description: `${hose2.name} (${hose2Length} ft)`,
-      qty: hose2Length,
-      unitPrice: hose2.pricePerFoot,
-      total: hose2.pricePerFoot * hose2Length
-    });
 
     const subtotal = lineItems.reduce((sum, item) => sum + item.total, 0);
 
     setQuote({
       config: {
         rows: rows.length,
-        totalSpots,
-        totalSingleArches,
-        totalDualArches,
-        totalArches,
-        totalDrops,
-        siteVoltage,
-        centralUnit: selectedCentralUnit.hp
+        totalSpots: totalSpots,
+        centralUnit: selectedUnit.partNumber,
+        totalDrops: totalDrops,
+        voltage: siteVoltage,
+        toolPreference: toolPreference
       },
       lineItems,
       subtotal
@@ -493,17 +386,19 @@ const VacuumQuoteCalculator = () => {
   const exportQuote = () => {
     if (!quote) return;
 
-    let csvContent = "Part Number,Description,Quantity,Unit Price,Total\n";
+    let csvContent = 'Part Number,Description,Quantity,Unit Price,Total\n';
+    
     quote.lineItems.forEach(item => {
-      csvContent += `"${item.partNumber}","${item.description}",${item.qty},$${item.unitPrice.toFixed(2)},$${item.total.toFixed(2)}\n`;
+      csvContent += `${item.partNumber},"${item.description}",${item.qty},${item.unitPrice.toFixed(2)},${item.total.toFixed(2)}\n`;
     });
+    
     csvContent += `\n,,,,Subtotal,$${quote.subtotal.toFixed(2)}`;
 
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `vacuum-quote-${rows.length}rows.csv`;
+    a.download = `vacuum-quote-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
   };
 
@@ -519,128 +414,159 @@ const VacuumQuoteCalculator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-8 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex-shrink-0 relative">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100 p-4 md:p-8">
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * {
+          font-family: 'Work Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+          opacity: 1;
+        }
+      `}</style>
+
+      <div className="max-w-6xl mx-auto">
+        {/* Header Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 flex-shrink-0 relative bg-slate-100 rounded-xl p-2">
                 <Image
-                  src="/avw_logo.png"   // path is from /public
+                  src="/avw_logo.png"
                   alt="Company Logo"
                   fill
-                  className="object-contain"
+                  className="object-contain p-1"
                   priority
                 />
               </div>
-              <h1 className="text-3xl font-bold text-gray-800">Vacuum System Quote Calculator</h1>
-            </div>
-          </div>
-
-          <div className="mb-6">
-            <div className="grid grid-cols-12 gap-3 mb-3 text-sm font-medium text-gray-700">
-              <div className="col-span-2">Row</div>
-              <div className="col-span-3">Parking Spots</div>
-              <div className="col-span-6"></div>
-              <div className="col-span-1"></div>
-            </div>
-
-            {rows.map((row, index) => (
-              <div key={index} className="grid grid-cols-12 gap-3 mb-2 items-center">
-                <div className="col-span-2 flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={`Row ${index + 1}`}
-                    disabled
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm"
-                  />
-                  {index === rows.length - 1 && (
-                    <button
-                      onClick={addRow}
-                      className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex-shrink-0"
-                      title="Add row"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-
-                <div className="col-span-3">
-                  <input
-                    type="number"
-                    min="2"
-                    value={row.spots}
-                    onChange={(e) => {
-                      const value = parseInt(e.target.value) || 2;
-                      updateRowSpots(index, value >= 2 ? value : 2);
-                    }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black text-sm"
-                  />
-                </div>
-
-                <div className="col-span-6"></div>
-
-                <div className="col-span-1 flex justify-center">
-                  {rows.length > 1 && (
-                    <button
-                      onClick={() => removeRow(index)}
-                      className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                      title="Remove row"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
+              <div>
+                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Vacuum System Calculator</h1>
+                <p className="text-sm text-slate-500 mt-0.5">Professional quote generation tool</p>
               </div>
-            ))}
+            </div>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+        {/* Configuration Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-2">
+            <div className="w-1.5 h-5 bg-blue-600 rounded-full"></div>
+            System Configuration
+          </h2>
+
+          {/* Central Unit Section */}
+          <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+            <div className="flex items-start justify-between mb-3">
+              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
                 Central Unit
+                <span className="text-xs font-normal text-slate-500">({totalSpots} total bays)</span>
               </label>
-              {(() => {
-                const availableUnits = getAvailableCentralUnits();
-                const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
-                
-                return (
-                  <select
-                    value={centralUnit}
-                    onChange={(e) => setCentralUnit(e.target.value)}
-                    disabled={availableUnits.length === 0}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    {availableUnits.length === 0 ? (
-                      <option value="">
-                        {totalSpots === 0 ? "Enter spots first" : `No units for ${totalSpots} spots`}
-                      </option>
-                    ) : (
-                      <>
-                        <option value="">Select central unit</option>
-                        {availableUnits.map(unit => (
-                          <option key={unit.partNumber} value={unit.partNumber}>
-                            {unit.partNumber} ({unit.minBays}-{unit.maxBays} spots)
-                          </option>
-                        ))}
-                      </>
-                    )}
-                  </select>
-                );
-              })()}
-              <div className="text-xs text-gray-500 mt-1">
-                Total spots: {rows.reduce((sum, row) => sum + row.spots, 0)}
-              </div>
             </div>
+            
+            {(() => {
+              const availableUnits = getAvailableCentralUnits();
+              return (
+                <select
+                  value={centralUnit}
+                  onChange={(e) => setCentralUnit(e.target.value)}
+                  disabled={availableUnits.length === 0}
+                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white disabled:bg-slate-100 disabled:cursor-not-allowed transition-all"
+                >
+                  {availableUnits.length === 0 ? (
+                    <option value="">{totalSpots === 0 ? "Configure bays below" : `No units available for ${totalSpots} bays`}</option>
+                  ) : (
+                    <>
+                      <option value="">Select central unit</option>
+                      {availableUnits.map(unit => (
+                        <option key={unit.partNumber} value={unit.partNumber}>
+                          {unit.partNumber} ({unit.minBays}-{unit.maxBays} bays)
+                        </option>
+                      ))}
+                    </>
+                  )}
+                </select>
+              );
+            })()}
+            
+            {totalSpots > 0 && getAvailableCentralUnits().length === 0 && (
+              <div className="mt-2 flex items-start gap-2 text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg">
+                <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                <span>Total of {totalSpots} bays exceeds maximum capacity. Please adjust configuration.</span>
+              </div>
+            )}
+          </div>
 
+          {/* Rows Section */}
+          <div className="mb-6">
+            <label className="text-sm font-semibold text-slate-700 mb-3 block">Parking Rows</label>
+            
+            <div className="space-y-2">
+              {rows.map((row, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="flex-shrink-0 w-20">
+                    <input
+                      type="text"
+                      value={`Row ${index + 1}`}
+                      disabled
+                      className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600 text-sm font-medium"
+                    />
+                  </div>
+                  
+                  <div className="flex-1 max-w-xs">
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="2"
+                        value={row.spots}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value) || 2;
+                          updateRowSpots(index, value >= 2 ? value : 2);
+                        }}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 pr-16"
+                      />
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-medium">
+                        bays
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {index === rows.length - 1 && (
+                      <button
+                        onClick={addRow}
+                        className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all hover:scale-105 active:scale-95"
+                        title="Add row"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    )}
+                    
+                    {rows.length > 1 && (
+                      <button
+                        onClick={() => removeRow(index)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                        title="Remove row"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Options Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Site Voltage
-              </label>
+              <label className="text-sm font-semibold text-slate-700 mb-2 block">Site Voltage</label>
               <select
                 value={siteVoltage}
                 onChange={(e) => setSiteVoltage(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white"
               >
                 <option value="230/460">230/460V (US Standard)</option>
                 <option value="575">575V (Canada)</option>
@@ -649,86 +575,91 @@ const VacuumQuoteCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Tool Preference
-              </label>
+              <label className="text-sm font-semibold text-slate-700 mb-2 block">Tool Preference</label>
               <select
                 value={toolPreference}
                 onChange={(e) => setToolPreference(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white"
               >
-                <option value="half">50/50 (Crevice + Claw)</option>
-                <option value="crevice">Crevice Only</option>
-                <option value="claw">Claw Only</option>
+                <option value="half">50/50 Mix (Crevice + Claw)</option>
+                <option value="crevice">Crevice Tools Only</option>
+                <option value="claw">Claw Tools Only</option>
               </select>
             </div>
           </div>
 
+          {/* Generate Button */}
           <button
             onClick={calculateQuote}
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
           >
             <Calculator className="w-5 h-5" />
             Generate Quote
           </button>
         </div>
 
+        {/* Quote Results */}
         {quote && (
-          <div className="bg-white rounded-lg shadow-xl p-8">
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-800">Quote Summary</h2>
+              <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <div className="w-1.5 h-5 bg-green-600 rounded-full"></div>
+                Quote Summary
+              </h2>
               <button
                 onClick={exportQuote}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
               >
-                <Download className="w-5 h-5" />
+                <Download className="w-4 h-4" />
                 Export CSV
               </button>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 p-4 bg-indigo-50 rounded-lg">
-              <div>
-                <p className="text-sm text-gray-600">Total Rows</p>
-                <p className="text-xl font-bold text-indigo-600">{quote.config.rows}</p>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                <p className="text-xs text-slate-500 font-medium mb-1">Total Rows</p>
+                <p className="text-2xl font-bold text-slate-900">{quote.config.rows}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Spots</p>
-                <p className="text-xl font-bold text-indigo-600">{quote.config.totalSpots}</p>
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                <p className="text-xs text-slate-500 font-medium mb-1">Total Bays</p>
+                <p className="text-2xl font-bold text-slate-900">{quote.config.totalSpots}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Central Unit</p>
-                <p className="text-xl font-bold text-indigo-600">{quote.config.centralUnit}</p>
+              <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
+                <p className="text-xs text-blue-600 font-medium mb-1">Central Unit</p>
+                <p className="text-lg font-bold text-blue-900">{quote.config.centralUnit}</p>
               </div>
-              <div>
-                <p className="text-sm text-gray-600">Total Drops</p>
-                <p className="text-xl font-bold text-indigo-600">{quote.config.totalDrops}</p>
+              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
+                <p className="text-xs text-slate-500 font-medium mb-1">Total Drops</p>
+                <p className="text-2xl font-bold text-slate-900">{quote.config.totalDrops}</p>
               </div>
             </div>
 
-            <div className="overflow-x-auto">
+            {/* Quote Table */}
+            <div className="overflow-x-auto -mx-6 px-6">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-gray-50 border-b-2 border-gray-200">
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Part Number</th>
-                    <th className="px-4 py-3 text-left text-sm font-semibold text-gray-700">Description</th>
-                    <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Qty</th>
-                    <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Unit Price</th>
-                    <th className="px-4 py-3 text-right text-sm font-semibold text-gray-700">Total</th>
-                    <th className="px-4 py-3 text-center text-sm font-semibold text-gray-700">Action</th>
+                  <tr className="border-b-2 border-slate-200">
+                    <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Part No.</th>
+                    <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Description</th>
+                    <th className="px-3 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">Qty</th>
+                    <th className="px-3 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Unit Price</th>
+                    <th className="px-3 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Total</th>
+                    <th className="px-3 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider w-16"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {quote.lineItems.map((item, index) => (
-                    <tr key={index} className="border-b border-gray-200 hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-mono text-gray-800">{item.partNumber}</td>
-                      <td className="px-4 py-3 text-sm text-gray-700">{item.description}</td>
-                      <td className="px-4 py-3 text-sm text-center text-gray-800">{item.qty}</td>
-                      <td className="px-4 py-3 text-sm text-right text-gray-800">${item.unitPrice.toFixed(2)}</td>
-                      <td className="px-4 py-3 text-sm text-right font-semibold text-gray-900">${item.total.toFixed(2)}</td>
-                      <td className="px-4 py-3 text-center">
+                    <tr key={index} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                      <td className="px-3 py-3 text-xs font-mono text-slate-700 font-medium">{item.partNumber}</td>
+                      <td className="px-3 py-3 text-sm text-slate-700">{item.description}</td>
+                      <td className="px-3 py-3 text-sm text-center text-slate-900 font-medium">{item.qty}</td>
+                      <td className="px-3 py-3 text-sm text-right text-slate-700 font-mono">${item.unitPrice.toFixed(2)}</td>
+                      <td className="px-3 py-3 text-sm text-right font-semibold text-slate-900 font-mono">${item.total.toFixed(2)}</td>
+                      <td className="px-3 py-3 text-center">
                         <button
                           onClick={() => deleteLineItem(index)}
-                          className="text-red-600 hover:text-red-800 hover:bg-red-50 p-2 rounded transition-colors"
+                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-all"
                           title="Delete item"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -738,9 +669,9 @@ const VacuumQuoteCalculator = () => {
                   ))}
                 </tbody>
                 <tfoot>
-                  <tr className="bg-indigo-50 border-t-2 border-indigo-200">
-                    <td colSpan="4" className="px-4 py-4 text-right text-lg font-bold text-gray-800">Subtotal:</td>
-                    <td colSpan="2" className="px-4 py-4 text-right text-xl font-bold text-indigo-600">${quote.subtotal.toFixed(2)}</td>
+                  <tr className="bg-slate-50 border-t-2 border-slate-200">
+                    <td colSpan="4" className="px-3 py-4 text-right text-base font-bold text-slate-900">Subtotal:</td>
+                    <td colSpan="2" className="px-3 py-4 text-right text-xl font-bold text-blue-600 font-mono">${quote.subtotal.toFixed(2)}</td>
                   </tr>
                 </tfoot>
               </table>
