@@ -526,7 +526,15 @@ const VacuumQuoteCalculator = () => {
         <div className="bg-white rounded-lg shadow-xl p-8 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <Calculator className="w-8 h-8 text-indigo-600" />
+              <div className="w-12 h-12 flex-shrink-0">
+                <Image
+                  src="/avw-logo.png"   // path is from /public
+                  alt="Company Logo"
+                  fill
+                  className="object-contain"
+                  priority
+                />
+              </div>
               <h1 className="text-3xl font-bold text-gray-800">Vacuum System Quote Calculator</h1>
             </div>
           </div>
