@@ -531,74 +531,82 @@ const VacuumQuoteCalculator = () => {
             </div>
           </div>
 
-          <div className="space-y-6 mb-6">
+          <div className="mb-6">
+            <div className="grid grid-cols-12 gap-3 mb-3 text-sm font-medium text-gray-700">
+              <div className="col-span-2">Row</div>
+              <div className="col-span-3">Parking Spots</div>
+              <div className="col-span-6">Central Unit</div>
+              <div className="col-span-1"></div>
+            </div>
+
             {rows.map((row, index) => {
               const availableUnits = getAvailableCentralUnits(row.spots);
               return (
-                <div key={index} className="p-4 border-2 border-indigo-200 rounded-lg bg-indigo-50">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-800">Row {index + 1}</h3>
-                    {rows.length > 1 && (
+                <div key={index} className="grid grid-cols-12 gap-3 mb-2 items-center">
+                  <div className="col-span-2 flex items-center gap-2">
+                    <input
+                      type="text"
+                      value={`Row ${index + 1}`}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm"
+                    />
+                    {index === rows.length - 1 && (
                       <button
-                        onClick={() => removeRow(index)}
-                        className="text-red-600 hover:text-red-800 hover:bg-red-100 p-2 rounded transition-colors"
-                        title="Remove row"
+                        onClick={addRow}
+                        className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex-shrink-0"
+                        title="Add row"
                       >
-                        <X className="w-5 h-5" />
+                        <Plus className="w-4 h-4" />
                       </button>
                     )}
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Parking Spots
-                      </label>
-                      <input
-                        type="number"
-                        min="2"
-                        value={row.spots}
-                        onChange={(e) => {
-                          const value = parseInt(e.target.value) || 2;
-                          updateRowSpots(index, value >= 2 ? value : 2);
-                        }}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
-                      />
-                    </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Central Unit ({availableUnits.length} option{availableUnits.length !== 1 ? 's' : ''})
-                      </label>
-                      <select
-                        value={row.centralUnit}
-                        onChange={(e) => updateRowCentralUnit(index, e.target.value)}
-                        disabled={availableUnits.length === 0}
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  <div className="col-span-3">
+                    <input
+                      type="number"
+                      min="2"
+                      value={row.spots}
+                      onChange={(e) => {
+                        const value = parseInt(e.target.value) || 2;
+                        updateRowSpots(index, value >= 2 ? value : 2);
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black text-sm"
+                    />
+                  </div>
+
+                  <div className="col-span-6">
+                    <select
+                      value={row.centralUnit}
+                      onChange={(e) => updateRowCentralUnit(index, e.target.value)}
+                      disabled={availableUnits.length === 0}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed text-sm"
+                    >
+                      {availableUnits.length === 0 ? (
+                        <option value="">No units available</option>
+                      ) : (
+                        availableUnits.map(unit => (
+                          <option key={unit.partNumber} value={unit.partNumber}>
+                            {unit.partNumber} ({unit.minBays}-{unit.maxBays} spots)
+                          </option>
+                        ))
+                      )}
+                    </select>
+                  </div>
+
+                  <div className="col-span-1 flex justify-center">
+                    {rows.length > 1 && (
+                      <button
+                        onClick={() => removeRow(index)}
+                        className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                        title="Remove row"
                       >
-                        {availableUnits.length === 0 ? (
-                          <option value="">No units available</option>
-                        ) : (
-                          availableUnits.map(unit => (
-                            <option key={unit.partNumber} value={unit.partNumber}>
-                              {unit.partNumber} ({unit.minBays}-{unit.maxBays} spots)
-                            </option>
-                          ))
-                        )}
-                      </select>
-                    </div>
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
                   </div>
                 </div>
               );
             })}
-
-            <button
-              onClick={addRow}
-              className="w-full py-3 border-2 border-dashed border-indigo-300 rounded-lg text-indigo-600 hover:bg-indigo-50 hover:border-indigo-400 transition-colors flex items-center justify-center gap-2"
-            >
-              <Plus className="w-5 h-5" />
-              Add Another Row
-            </button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
