@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Calculator, Download, Trash2, Plus, X } from 'lucide-react';
 
-// Complete price data from 2025 AVW Price List
+// Complete price data from 2025 AVW Price List (verified from PDF)
 const priceData = {
   centralUnits: [
     {
@@ -196,358 +196,295 @@ const priceData = {
     },
     dropComponents: {
       "VA2567V": { name: "Vacuum Inlet Valve and 1-1/2\" Hose Connector Assembly", price: 92.20 },
-      "VAC-CUFFSWIVEL-150HX150T": { name: "Swivel Cuff, 1-1/2\" Vacuum Hose x 1-1/2\" Tube", price: 5.60 }
-    },
-    tools: {
-      crevice: {
-        "VAC-CREVICE-TOOL": { name: "Crevice Tool for 1-1/2\" Vacuum Hose", price: 7.80 },
-        "VA3352WS": { name: "Crevice Tool Holster, Black", price: 114.00 },
-        "VA5129W": { name: "Single Tool Holster Bracket", price: 241.00 }
-      },
-      claw: {
-        "VAC-CLAW-NOZ": { name: "Claw Nozzle, 13\"Lg for 1-1/2\" Vacuum Hose", price: 7.20 },
-        "VA5129WS": { name: "Claw Hanger, Two-Peg Style with PVC Flapper Valve", price: 175.00 },
-        "VA5129WL": { name: "\"L\" Claw Holder Bracket", price: 63.70 }
-      }
-    },
-    hoses: {
-      "VAC-HOSE-150": { name: "1-1/2\" Black Vacuum Hose", pricePerFoot: 3.40 },
-      "VAC-HOSE-2IN": { name: "2\" Black Vacuum Hose", pricePerFoot: 4.50 }
-    }
-  },
-  tubeBends: {
-    "TUBEBENDS-10IN": {
-      name: "10\" Galvanized Tube, Bends & Compression Couplings",
-      price: 2995.00
+      "VA6101D": { name: "6' Retractable Vacuum Hose w/Claw Tool, Black Neoprene", price: 197.00 },
+      "VA6101E": { name: "6' Retractable Vacuum Hose w/Crevice Tool, Black Neoprene", price: 192.00 }
     }
   }
 };
 
 const VacuumQuoteCalculator = () => {
-  const [rows, setRows] = useState([{ spots: 10 }]);
+  const [rows, setRows] = useState([{ id: 1, spots: 5 }]);
   const [centralUnit, setCentralUnit] = useState('');
-  const [toolPreference, setToolPreference] = useState('half');
   const [siteVoltage, setSiteVoltage] = useState('230/460');
+  const [toolPreference, setToolPreference] = useState('half');
   const [quote, setQuote] = useState(null);
 
-  const roundToNearest50 = (num) => {
-    return Math.ceil(num / 50) * 50;
+  // Calculate total spots across all rows
+  const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
+
+  // Get available central units based on total spots
+  const getAvailableCentralUnits = (spots) => {
+    return priceData.centralUnits.filter(unit => 
+      spots >= unit.minBays && spots <= unit.maxBays
+    );
   };
 
-  const getAvailableCentralUnits = () => {
-    const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
-    
-    const units = priceData.centralUnits.filter(unit => {
-      return totalSpots >= unit.minBays && totalSpots <= unit.maxBays;
-    });
-    
-    return units.sort((a, b) => {
-      const aIsDual = a.hp.includes('Dual');
-      const bIsDual = b.hp.includes('Dual');
-      if (aIsDual === bIsDual) return 0;
-      return aIsDual ? 1 : -1;
-    });
-  };
-
-  const selectWorkstation = (spotsPerRow) => {
-    for (const station of priceData.workstations) {
-      if (spotsPerRow >= station.minBays && spotsPerRow <= station.maxBays) {
-        return station;
+  // Update central unit when total spots change
+  useEffect(() => {
+    const availableUnits = getAvailableCentralUnits(totalSpots);
+    if (availableUnits.length > 0 && !centralUnit) {
+      setCentralUnit(availableUnits[0].partNumber);
+    } else if (availableUnits.length > 0) {
+      // Check if current selection is still valid
+      const isValid = availableUnits.some(unit => unit.partNumber === centralUnit);
+      if (!isValid) {
+        setCentralUnit(availableUnits[0].partNumber);
       }
     }
-    return priceData.workstations[priceData.workstations.length - 1];
-  };
+  }, [totalSpots]);
 
   const addRow = () => {
-    setRows([...rows, { spots: 10 }]);
+    const newRow = {
+      id: rows.length + 1,
+      spots: 5
+    };
+    setRows([...rows, newRow]);
   };
 
   const removeRow = (index) => {
     if (rows.length > 1) {
-      const newRows = rows.filter((_, i) => i !== index);
-      setRows(newRows);
+      setRows(rows.filter((_, i) => i !== index));
     }
   };
 
-  const updateRowSpots = (index, spots) => {
+  const updateRowSpots = (index, value) => {
     const newRows = [...rows];
-    newRows[index].spots = spots;
+    newRows[index].spots = value;
     setRows(newRows);
-    setCentralUnit(''); // Reset central unit when spots change since total spots changed
   };
-
-  useEffect(() => {
-    // Auto-select central unit when total spots change
-    const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
-    if (!centralUnit && totalSpots > 0) {
-      const availableUnits = getAvailableCentralUnits();
-      if (availableUnits.length > 0) {
-        setCentralUnit(availableUnits[0].partNumber);
-      }
-    }
-  }, [rows, centralUnit]);
 
   const calculateQuote = () => {
-    let lineItems = [];
-    let totalSpots = 0;
-    let totalSingleArches = 0;
-    let totalDualArches = 0;
-    let totalArches = 0;
-    let totalDrops = 0;
+    const lineItems = [];
+    const totalArches = rows.length;
+    const totalDrops = totalSpots;
 
     // Get selected central unit
-    const selectedCentralUnit = priceData.centralUnits.find(u => u.partNumber === centralUnit);
-    if (!selectedCentralUnit) {
-      alert("Please select a central unit");
+    const selectedUnit = priceData.centralUnits.find(u => u.partNumber === centralUnit);
+    if (!selectedUnit) {
+      alert('Please select a valid central unit');
       return;
     }
-
-    // Calculate total spots from all rows
-    totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
-    
-    // Validate that total spots are within central unit's capacity
-    if (totalSpots < selectedCentralUnit.minBays || totalSpots > selectedCentralUnit.maxBays) {
-      alert(`Total spots (${totalSpots}) are outside the range for selected central unit (${selectedCentralUnit.minBays}-${selectedCentralUnit.maxBays} spots)`);
-      return;
-    }
-
-    // Calculate arches and drops for all rows combined
-    const singleArchesPerRow = 2;
-    totalSingleArches = rows.length * singleArchesPerRow;
-    
-    rows.forEach(row => {
-      totalDualArches += row.spots - 1;
-    });
-    
-    totalArches = totalSingleArches + totalDualArches;
-    totalDrops = (totalDualArches * 2) + totalSingleArches;
 
     // Add central unit (only once)
     lineItems.push({
-      partNumber: selectedCentralUnit.partNumber,
-      description: selectedCentralUnit.name,
+      partNumber: selectedUnit.partNumber,
+      description: selectedUnit.name,
       qty: 1,
-      unitPrice: selectedCentralUnit.price,
-      total: selectedCentralUnit.price
+      unitPrice: selectedUnit.price,
+      total: selectedUnit.price
     });
 
-    // Add VFD (only once)
-    const vfd = priceData.vfdControls[selectedCentralUnit.hp]?.[siteVoltage];
-    if (vfd) {
+    // Add VFD Control (only once, based on central unit HP)
+    const vfdControl = priceData.vfdControls[selectedUnit.hp]?.[siteVoltage];
+    if (vfdControl) {
       lineItems.push({
-        partNumber: vfd.partNumber,
-        description: `${selectedCentralUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel`,
+        partNumber: vfdControl.partNumber,
+        description: `${selectedUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel`,
         qty: 1,
-        unitPrice: vfd.price,
-        total: vfd.price
+        unitPrice: vfdControl.price,
+        total: vfdControl.price
       });
     }
 
-    // Add workstations for each row
+    // Add piping (based on total spots)
+    const piping = priceData.workstations.find(w => 
+      totalSpots >= w.minBays && totalSpots <= w.maxBays
+    );
+    if (piping) {
+      lineItems.push({
+        partNumber: piping.partNumber,
+        description: piping.name,
+        qty: 1,
+        unitPrice: piping.price,
+        total: piping.price
+      });
+    }
+
+    // Add arches (one per row, dual if row has more than 3 spots)
     rows.forEach((row, index) => {
-      const workstation = selectWorkstation(row.spots);
-      lineItems.push({
-        partNumber: workstation.partNumber,
-        description: `${workstation.name} (Row ${index + 1})`,
-        qty: row.spots,
-        unitPrice: workstation.price,
-        total: workstation.price * row.spots
-      });
-    });
-
-    // Add tube bends (2 per system)
-    const tubeBends = priceData.tubeBends["TUBEBENDS-10IN"];
-    lineItems.push({
-      partNumber: "TUBEBENDS-10IN",
-      description: tubeBends.name,
-      qty: rows.length * 2,
-      unitPrice: tubeBends.price,
-      total: tubeBends.price * rows.length * 2
-    });
-
-    // Add single arches
-    lineItems.push({
-      partNumber: "VA5129A-1",
-      description: priceData.components.arches["VA5129A-1"].name,
-      qty: totalSingleArches,
-      unitPrice: priceData.components.arches["VA5129A-1"].price,
-      total: priceData.components.arches["VA5129A-1"].price * totalSingleArches
-    });
-
-    // Add dual arches
-    lineItems.push({
-      partNumber: "VA5129A-2",
-      description: priceData.components.arches["VA5129A-2"].name,
-      qty: totalDualArches,
-      unitPrice: priceData.components.arches["VA5129A-2"].price,
-      total: priceData.components.arches["VA5129A-2"].price * totalDualArches
-    });
-
-    // Add arch components
-    Object.entries(priceData.components.archComponents).forEach(([key, item]) => {
-      lineItems.push({
-        partNumber: key,
-        description: item.name,
-        qty: totalArches,
-        unitPrice: item.price,
-        total: item.price * totalArches
-      });
-    });
-
-    // Add drop components
-    Object.entries(priceData.components.dropComponents).forEach(([key, item]) => {
-      lineItems.push({
-        partNumber: key,
-        description: item.name,
-        qty: totalDrops,
-        unitPrice: item.price,
-        total: item.price * totalDrops
-      });
-    });
-
-    // Add tools based on preference
-    if (toolPreference === 'half') {
-      const halfDrops = totalDrops / 2;
+      const isDual = row.spots > 3;
+      const archType = isDual ? "VA5129A-2" : "VA5129A-1";
+      const arch = priceData.components.arches[archType];
       
-      Object.entries(priceData.components.tools.crevice).forEach(([key, item]) => {
-        lineItems.push({
-          partNumber: key,
-          description: item.name,
-          qty: halfDrops,
-          unitPrice: item.price,
-          total: item.price * halfDrops
-        });
+      lineItems.push({
+        partNumber: archType,
+        description: `${arch.name} (Row ${index + 1})`,
+        qty: 1,
+        unitPrice: arch.price,
+        total: arch.price
+      });
+    });
+
+    // Add arch components (per arch)
+    Object.entries(priceData.components.archComponents).forEach(([partNum, component]) => {
+      lineItems.push({
+        partNumber: partNum,
+        description: component.name,
+        qty: totalArches,
+        unitPrice: component.price,
+        total: component.price * totalArches
+      });
+    });
+
+    // Add drop components (per drop)
+    const inletValve = priceData.components.dropComponents["VA2567V"];
+    lineItems.push({
+      partNumber: "VA2567V",
+      description: inletValve.name,
+      qty: totalDrops,
+      unitPrice: inletValve.price,
+      total: inletValve.price * totalDrops
+    });
+
+    // Add hoses based on tool preference
+    if (toolPreference === 'half') {
+      const clawCount = Math.ceil(totalDrops / 2);
+      const creviceCount = totalDrops - clawCount;
+
+      const clawHose = priceData.components.dropComponents["VA6101D"];
+      lineItems.push({
+        partNumber: "VA6101D",
+        description: clawHose.name,
+        qty: clawCount,
+        unitPrice: clawHose.price,
+        total: clawHose.price * clawCount
       });
 
-      Object.entries(priceData.components.tools.claw).forEach(([key, item]) => {
-        lineItems.push({
-          partNumber: key,
-          description: item.name,
-          qty: halfDrops,
-          unitPrice: item.price,
-          total: item.price * halfDrops
-        });
-      });
-    } else if (toolPreference === 'crevice') {
-      Object.entries(priceData.components.tools.crevice).forEach(([key, item]) => {
-        lineItems.push({
-          partNumber: key,
-          description: item.name,
-          qty: totalDrops,
-          unitPrice: item.price,
-          total: item.price * totalDrops
-        });
+      const creviceHose = priceData.components.dropComponents["VA6101E"];
+      lineItems.push({
+        partNumber: "VA6101E",
+        description: creviceHose.name,
+        qty: creviceCount,
+        unitPrice: creviceHose.price,
+        total: creviceHose.price * creviceCount
       });
     } else if (toolPreference === 'claw') {
-      Object.entries(priceData.components.tools.claw).forEach(([key, item]) => {
-        lineItems.push({
-          partNumber: key,
-          description: item.name,
-          qty: totalDrops,
-          unitPrice: item.price,
-          total: item.price * totalDrops
-        });
+      const clawHose = priceData.components.dropComponents["VA6101D"];
+      lineItems.push({
+        partNumber: "VA6101D",
+        description: clawHose.name,
+        qty: totalDrops,
+        unitPrice: clawHose.price,
+        total: clawHose.price * totalDrops
+      });
+    } else {
+      const creviceHose = priceData.components.dropComponents["VA6101E"];
+      lineItems.push({
+        partNumber: "VA6101E",
+        description: creviceHose.name,
+        qty: totalDrops,
+        unitPrice: creviceHose.price,
+        total: creviceHose.price * totalDrops
       });
     }
-
-    // Add hoses
-    const hose150Length = roundToNearest50(totalDrops * 25);
-    const hose2Length = roundToNearest50(totalArches * 5);
-
-    const hose150 = priceData.components.hoses["VAC-HOSE-150"];
-    lineItems.push({
-      partNumber: "VAC-HOSE-150",
-      description: `${hose150.name} (${hose150Length} ft)`,
-      qty: hose150Length,
-      unitPrice: hose150.pricePerFoot,
-      total: hose150.pricePerFoot * hose150Length
-    });
-
-    const hose2 = priceData.components.hoses["VAC-HOSE-2IN"];
-    lineItems.push({
-      partNumber: "VAC-HOSE-2IN",
-      description: `${hose2.name} (${hose2Length} ft)`,
-      qty: hose2Length,
-      unitPrice: hose2.pricePerFoot,
-      total: hose2.pricePerFoot * hose2Length
-    });
 
     const subtotal = lineItems.reduce((sum, item) => sum + item.total, 0);
 
     setQuote({
       config: {
         rows: rows.length,
-        totalSpots,
-        totalSingleArches,
-        totalDualArches,
-        totalArches,
-        totalDrops,
-        siteVoltage,
-        centralUnit: selectedCentralUnit.hp
+        totalSpots: totalSpots,
+        totalArches: totalArches,
+        totalDrops: totalDrops,
+        centralUnit: selectedUnit.name,
+        voltage: siteVoltage,
+        toolPreference: toolPreference
       },
       lineItems,
       subtotal
     });
   };
 
-  const exportQuote = () => {
-    if (!quote) return;
-
-    let csvContent = "Part Number,Description,Quantity,Unit Price,Total\n";
-    quote.lineItems.forEach(item => {
-      csvContent += `"${item.partNumber}","${item.description}",${item.qty},$${item.unitPrice.toFixed(2)},$${item.total.toFixed(2)}\n`;
-    });
-    csvContent += `\n,,,,Subtotal,$${quote.subtotal.toFixed(2)}`;
-
-    const blob = new Blob([csvContent], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `vacuum-quote-${rows.length}rows.csv`;
-    a.click();
-  };
-
   const deleteLineItem = (index) => {
-    const updatedLineItems = quote.lineItems.filter((_, i) => i !== index);
-    const newSubtotal = updatedLineItems.reduce((sum, item) => sum + item.total, 0);
-    
+    const newLineItems = quote.lineItems.filter((_, i) => i !== index);
+    const newSubtotal = newLineItems.reduce((sum, item) => sum + item.total, 0);
     setQuote({
       ...quote,
-      lineItems: updatedLineItems,
+      lineItems: newLineItems,
       subtotal: newSubtotal
     });
   };
 
+  const exportQuote = () => {
+    if (!quote) return;
+
+    const csvRows = [
+      ['Part Number', 'Description', 'Quantity', 'Unit Price', 'Total'],
+      ...quote.lineItems.map(item => [
+        item.partNumber,
+        item.description,
+        item.qty,
+        item.unitPrice.toFixed(2),
+        item.total.toFixed(2)
+      ]),
+      ['', '', '', 'Subtotal:', quote.subtotal.toFixed(2)]
+    ];
+
+    const csvContent = csvRows.map(row => row.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `vacuum-quote-${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  };
+
+  const availableUnits = getAvailableCentralUnits(totalSpots);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-xl p-8 mb-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex-shrink-0 relative">
-                <Image
-                  src="/avw_logo.png"   // path is from /public
-                  alt="Company Logo"
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
+        <div className="bg-white rounded-lg shadow-xl p-8 mb-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center">
+              <Calculator className="w-7 h-7 text-white" />
+            </div>
+            <div>
               <h1 className="text-3xl font-bold text-gray-800">Vacuum System Quote Calculator</h1>
+              <p className="text-gray-600">Configure your custom vacuum system</p>
             </div>
           </div>
 
+          {/* Central Unit Selection (Single for entire quote) */}
+          <div className="mb-6 p-4 bg-indigo-50 rounded-lg border-2 border-indigo-200">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Central Unit (Total Spots: {totalSpots})
+            </label>
+            <select
+              value={centralUnit}
+              onChange={(e) => setCentralUnit(e.target.value)}
+              disabled={availableUnits.length === 0}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
+            >
+              {availableUnits.length === 0 ? (
+                <option value="">No units available for {totalSpots} spots</option>
+              ) : (
+                availableUnits.map(unit => (
+                  <option key={unit.partNumber} value={unit.partNumber}>
+                    {unit.partNumber} ({unit.minBays}-{unit.maxBays} bays)
+                  </option>
+                ))
+              )}
+            </select>
+            {availableUnits.length === 0 && (
+              <p className="mt-2 text-sm text-red-600">
+                Total spots ({totalSpots}) exceeds maximum capacity. Please adjust your configuration.
+              </p>
+            )}
+          </div>
+
+          {/* Rows Configuration */}
           <div className="mb-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Parking Rows Configuration</h3>
             <div className="grid grid-cols-12 gap-3 mb-3 text-sm font-medium text-gray-700">
-              <div className="col-span-2">Row</div>
-              <div className="col-span-3">Parking Spots</div>
-              <div className="col-span-6"></div>
+              <div className="col-span-3">Row</div>
+              <div className="col-span-8">Parking Spots</div>
               <div className="col-span-1"></div>
             </div>
 
             {rows.map((row, index) => (
               <div key={index} className="grid grid-cols-12 gap-3 mb-2 items-center">
-                <div className="col-span-2 flex items-center gap-2">
+                <div className="col-span-3 flex items-center gap-2">
                   <input
                     type="text"
                     value={`Row ${index + 1}`}
@@ -565,7 +502,7 @@ const VacuumQuoteCalculator = () => {
                   )}
                 </div>
 
-                <div className="col-span-3">
+                <div className="col-span-8">
                   <input
                     type="number"
                     min="2"
@@ -577,8 +514,6 @@ const VacuumQuoteCalculator = () => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black text-sm"
                   />
                 </div>
-
-                <div className="col-span-6"></div>
 
                 <div className="col-span-1 flex justify-center">
                   {rows.length > 1 && (
@@ -596,43 +531,6 @@ const VacuumQuoteCalculator = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Central Unit
-              </label>
-              {(() => {
-                const availableUnits = getAvailableCentralUnits();
-                const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
-                
-                return (
-                  <select
-                    value={centralUnit}
-                    onChange={(e) => setCentralUnit(e.target.value)}
-                    disabled={availableUnits.length === 0}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
-                  >
-                    {availableUnits.length === 0 ? (
-                      <option value="">
-                        {totalSpots === 0 ? "Enter spots first" : `No units for ${totalSpots} spots`}
-                      </option>
-                    ) : (
-                      <>
-                        <option value="">Select central unit</option>
-                        {availableUnits.map(unit => (
-                          <option key={unit.partNumber} value={unit.partNumber}>
-                            {unit.partNumber} ({unit.minBays}-{unit.maxBays} spots)
-                          </option>
-                        ))}
-                      </>
-                    )}
-                  </select>
-                );
-              })()}
-              <div className="text-xs text-gray-500 mt-1">
-                Total spots: {rows.reduce((sum, row) => sum + row.spots, 0)}
-              </div>
-            </div>
-
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Site Voltage
@@ -696,8 +594,8 @@ const VacuumQuoteCalculator = () => {
                 <p className="text-xl font-bold text-indigo-600">{quote.config.totalSpots}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Central Unit</p>
-                <p className="text-xl font-bold text-indigo-600">{quote.config.centralUnit}</p>
+                <p className="text-sm text-gray-600">Total Arches</p>
+                <p className="text-xl font-bold text-indigo-600">{quote.config.totalArches}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Drops</p>
