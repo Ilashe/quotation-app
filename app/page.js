@@ -224,7 +224,8 @@ const priceData = {
 };
 
 const VacuumQuoteCalculator = () => {
-  const [rows, setRows] = useState([{ spots: 10, centralUnit: '' }]);
+  const [rows, setRows] = useState([{ spots: 10 }]);
+  const [centralUnit, setCentralUnit] = useState('');
   const [toolPreference, setToolPreference] = useState('half');
   const [siteVoltage, setSiteVoltage] = useState('230/460');
   const [quote, setQuote] = useState(null);
@@ -233,9 +234,11 @@ const VacuumQuoteCalculator = () => {
     return Math.ceil(num / 50) * 50;
   };
 
-  const getAvailableCentralUnits = (spots) => {
+  const getAvailableCentralUnits = () => {
+    const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
+    
     const units = priceData.centralUnits.filter(unit => {
-      return spots >= unit.minBays && spots <= unit.maxBays;
+      return totalSpots >= unit.minBays && totalSpots <= unit.maxBays;
     });
     
     return units.sort((a, b) => {
@@ -256,7 +259,7 @@ const VacuumQuoteCalculator = () => {
   };
 
   const addRow = () => {
-    setRows([...rows, { spots: 10, centralUnit: '' }]);
+    setRows([...rows, { spots: 10 }]);
   };
 
   const removeRow = (index) => {
@@ -269,32 +272,20 @@ const VacuumQuoteCalculator = () => {
   const updateRowSpots = (index, spots) => {
     const newRows = [...rows];
     newRows[index].spots = spots;
-    newRows[index].centralUnit = ''; // Reset central unit when spots change
     setRows(newRows);
-  };
-
-  const updateRowCentralUnit = (index, centralUnit) => {
-    const newRows = [...rows];
-    newRows[index].centralUnit = centralUnit;
-    setRows(newRows);
+    setCentralUnit(''); // Reset central unit when spots change since total spots changed
   };
 
   useEffect(() => {
-    // Auto-select central units when spots change
-    const newRows = rows.map(row => {
-      if (!row.centralUnit && row.spots > 0) {
-        const availableUnits = getAvailableCentralUnits(row.spots);
-        if (availableUnits.length > 0) {
-          return { ...row, centralUnit: availableUnits[0].partNumber };
-        }
+    // Auto-select central unit when total spots change
+    const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
+    if (!centralUnit && totalSpots > 0) {
+      const availableUnits = getAvailableCentralUnits();
+      if (availableUnits.length > 0) {
+        setCentralUnit(availableUnits[0].partNumber);
       }
-      return row;
-    });
-    
-    if (JSON.stringify(newRows) !== JSON.stringify(rows)) {
-      setRows(newRows);
     }
-  }, [rows]);
+  }, [rows, centralUnit]);
 
   const calculateQuote = () => {
     let lineItems = [];
@@ -304,50 +295,55 @@ const VacuumQuoteCalculator = () => {
     let totalArches = 0;
     let totalDrops = 0;
 
-    // Add central units and VFDs for each row
-    rows.forEach((row, index) => {
-      const centralUnit = priceData.centralUnits.find(u => u.partNumber === row.centralUnit);
-      if (!centralUnit) {
-        alert(`Please select a central unit for Row ${index + 1}`);
-        return;
-      }
+    // Get selected central unit
+    const selectedCentralUnit = priceData.centralUnits.find(u => u.partNumber === centralUnit);
+    if (!selectedCentralUnit) {
+      alert("Please select a central unit");
+      return;
+    }
 
-      totalSpots += row.spots;
-      
-      // Calculate arches for this row
-      const singleArchesThisRow = 2;
-      const dualArchesThisRow = row.spots - 1;
-      const archesThisRow = singleArchesThisRow + dualArchesThisRow;
-      const dropsThisRow = (dualArchesThisRow * 2) + singleArchesThisRow;
-      
-      totalSingleArches += singleArchesThisRow;
-      totalDualArches += dualArchesThisRow;
-      totalArches += archesThisRow;
-      totalDrops += dropsThisRow;
+    // Calculate total spots from all rows
+    totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
+    
+    // Validate that total spots are within central unit's capacity
+    if (totalSpots < selectedCentralUnit.minBays || totalSpots > selectedCentralUnit.maxBays) {
+      alert(`Total spots (${totalSpots}) are outside the range for selected central unit (${selectedCentralUnit.minBays}-${selectedCentralUnit.maxBays} spots)`);
+      return;
+    }
 
-      // Add central unit
-      lineItems.push({
-        partNumber: centralUnit.partNumber,
-        description: `${centralUnit.name} (Row ${index + 1})`,
-        qty: 1,
-        unitPrice: centralUnit.price,
-        total: centralUnit.price
-      });
+    // Calculate arches and drops for all rows combined
+    const singleArchesPerRow = 2;
+    totalSingleArches = rows.length * singleArchesPerRow;
+    
+    rows.forEach(row => {
+      totalDualArches += row.spots - 1;
+    });
+    
+    totalArches = totalSingleArches + totalDualArches;
+    totalDrops = (totalDualArches * 2) + totalSingleArches;
 
-      // Add VFD
-      const vfd = priceData.vfdControls[centralUnit.hp]?.[siteVoltage];
-      if (vfd) {
-        lineItems.push({
-          partNumber: vfd.partNumber,
-          description: `${centralUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel (Row ${index + 1})`,
-          qty: 1,
-          unitPrice: vfd.price,
-          total: vfd.price
-        });
-      }
+    // Add central unit (only once)
+    lineItems.push({
+      partNumber: selectedCentralUnit.partNumber,
+      description: selectedCentralUnit.name,
+      qty: 1,
+      unitPrice: selectedCentralUnit.price,
+      total: selectedCentralUnit.price
     });
 
-    // Add workstations
+    // Add VFD (only once)
+    const vfd = priceData.vfdControls[selectedCentralUnit.hp]?.[siteVoltage];
+    if (vfd) {
+      lineItems.push({
+        partNumber: vfd.partNumber,
+        description: `${selectedCentralUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel`,
+        qty: 1,
+        unitPrice: vfd.price,
+        total: vfd.price
+      });
+    }
+
+    // Add workstations for each row
     rows.forEach((row, index) => {
       const workstation = selectWorkstation(row.spots);
       lineItems.push({
@@ -486,7 +482,8 @@ const VacuumQuoteCalculator = () => {
         totalDualArches,
         totalArches,
         totalDrops,
-        siteVoltage
+        siteVoltage,
+        centralUnit: selectedCentralUnit.hp
       },
       lineItems,
       subtotal
@@ -544,81 +541,98 @@ const VacuumQuoteCalculator = () => {
             <div className="grid grid-cols-12 gap-3 mb-3 text-sm font-medium text-gray-700">
               <div className="col-span-2">Row</div>
               <div className="col-span-3">Parking Spots</div>
-              <div className="col-span-6">Central Unit</div>
+              <div className="col-span-6"></div>
               <div className="col-span-1"></div>
             </div>
 
-            {rows.map((row, index) => {
-              const availableUnits = getAvailableCentralUnits(row.spots);
-              return (
-                <div key={index} className="grid grid-cols-12 gap-3 mb-2 items-center">
-                  <div className="col-span-2 flex items-center gap-2">
-                    <input
-                      type="text"
-                      value={`Row ${index + 1}`}
-                      disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm"
-                    />
-                    {index === rows.length - 1 && (
-                      <button
-                        onClick={addRow}
-                        className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex-shrink-0"
-                        title="Add row"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="col-span-3">
-                    <input
-                      type="number"
-                      min="2"
-                      value={row.spots}
-                      onChange={(e) => {
-                        const value = parseInt(e.target.value) || 2;
-                        updateRowSpots(index, value >= 2 ? value : 2);
-                      }}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black text-sm"
-                    />
-                  </div>
-
-                  <div className="col-span-6">
-                    <select
-                      value={row.centralUnit}
-                      onChange={(e) => updateRowCentralUnit(index, e.target.value)}
-                      disabled={availableUnits.length === 0}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed text-sm"
+            {rows.map((row, index) => (
+              <div key={index} className="grid grid-cols-12 gap-3 mb-2 items-center">
+                <div className="col-span-2 flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={`Row ${index + 1}`}
+                    disabled
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm"
+                  />
+                  {index === rows.length - 1 && (
+                    <button
+                      onClick={addRow}
+                      className="p-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition-colors flex-shrink-0"
+                      title="Add row"
                     >
-                      {availableUnits.length === 0 ? (
-                        <option value="">No units available</option>
-                      ) : (
-                        availableUnits.map(unit => (
-                          <option key={unit.partNumber} value={unit.partNumber}>
-                            {unit.partNumber} ({unit.minBays}-{unit.maxBays} spots)
-                          </option>
-                        ))
-                      )}
-                    </select>
-                  </div>
-
-                  <div className="col-span-1 flex justify-center">
-                    {rows.length > 1 && (
-                      <button
-                        onClick={() => removeRow(index)}
-                        className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
-                        title="Remove row"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
-              );
-            })}
+
+                <div className="col-span-3">
+                  <input
+                    type="number"
+                    min="2"
+                    value={row.spots}
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value) || 2;
+                      updateRowSpots(index, value >= 2 ? value : 2);
+                    }}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black text-sm"
+                  />
+                </div>
+
+                <div className="col-span-6"></div>
+
+                <div className="col-span-1 flex justify-center">
+                  {rows.length > 1 && (
+                    <button
+                      onClick={() => removeRow(index)}
+                      className="p-2 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-colors"
+                      title="Remove row"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Central Unit
+              </label>
+              {(() => {
+                const availableUnits = getAvailableCentralUnits();
+                const totalSpots = rows.reduce((sum, row) => sum + row.spots, 0);
+                
+                return (
+                  <select
+                    value={centralUnit}
+                    onChange={(e) => setCentralUnit(e.target.value)}
+                    disabled={availableUnits.length === 0}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black disabled:bg-gray-100 disabled:cursor-not-allowed"
+                  >
+                    {availableUnits.length === 0 ? (
+                      <option value="">
+                        {totalSpots === 0 ? "Enter spots first" : `No units for ${totalSpots} spots`}
+                      </option>
+                    ) : (
+                      <>
+                        <option value="">Select central unit</option>
+                        {availableUnits.map(unit => (
+                          <option key={unit.partNumber} value={unit.partNumber}>
+                            {unit.partNumber} ({unit.minBays}-{unit.maxBays} spots)
+                          </option>
+                        ))}
+                      </>
+                    )}
+                  </select>
+                );
+              })()}
+              <div className="text-xs text-gray-500 mt-1">
+                Total spots: {rows.reduce((sum, row) => sum + row.spots, 0)}
+              </div>
+            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Site Voltage
@@ -682,8 +696,8 @@ const VacuumQuoteCalculator = () => {
                 <p className="text-xl font-bold text-indigo-600">{quote.config.totalSpots}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-600">Total Arches</p>
-                <p className="text-xl font-bold text-indigo-600">{quote.config.totalArches}</p>
+                <p className="text-sm text-gray-600">Central Unit</p>
+                <p className="text-xl font-bold text-indigo-600">{quote.config.centralUnit}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-600">Total Drops</p>
