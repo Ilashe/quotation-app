@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { Calculator, Download, Trash2, Plus, X } from 'lucide-react';
 
 // Complete price data from 2025 AVW Price List
@@ -526,7 +527,7 @@ const VacuumQuoteCalculator = () => {
         <div className="bg-white rounded-lg shadow-xl p-8 mb-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 flex-shrink-0">
+              <div className="w-12 h-12 flex-shrink-0 relative">
                 <Image
                   src="/avw-logo.png"   // path is from /public
                   alt="Company Logo"
