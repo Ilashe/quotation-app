@@ -262,11 +262,12 @@ const VacuumQuoteCalculator = () => {
 
   const totalArches = calculateTotalArches();
   const totalDrops = calculateTotalDrops();
+  const totalBays = rows.reduce((sum, row) => sum + (row.spots || 0), 0);
 
-  // Get available central units based on total arches
+  // Get available central units based on total bays (not arches)
   const getAvailableCentralUnits = () => {
     return priceData.centralUnits.filter(unit => 
-      totalArches >= unit.minBays && totalArches <= unit.maxBays
+      totalBays >= unit.minBays && totalBays <= unit.maxBays
     );
   };
 
@@ -280,7 +281,7 @@ const VacuumQuoteCalculator = () => {
         setCentralUnit(availableUnits[0].partNumber);
       }
     }
-  }, [totalArches]);
+  }, [totalBays]);
 
   const addRow = () => {
     setRows([...rows, { id: rows.length + 1, spots: 5 }]);
@@ -745,7 +746,7 @@ const VacuumQuoteCalculator = () => {
             <div className="flex items-start justify-between mb-3">
               <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
                 Central Unit
-                <span className="text-xs font-normal text-slate-500">({totalArches} arches)</span>
+                <span className="text-xs font-normal text-slate-500">({totalBays} bays)</span>
               </label>
             </div>
             
@@ -759,13 +760,13 @@ const VacuumQuoteCalculator = () => {
                   className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white disabled:bg-slate-100 disabled:cursor-not-allowed transition-all"
                 >
                   {availableUnits.length === 0 ? (
-                    <option value="">{totalArches === 0 ? "Configure bays below" : `No units available for ${totalArches} arches`}</option>
+                    <option value="">{totalBays === 0 ? "Configure bays below" : `No units available for ${totalBays} bays`}</option>
                   ) : (
                     <>
                       <option value="">Select central unit</option>
                       {availableUnits.map(unit => (
                         <option key={unit.partNumber} value={unit.partNumber}>
-                          {unit.partNumber} (Qty: {unit.quantity || 1}) - {unit.minBays}-{unit.maxBays} arches
+                          {unit.partNumber} (Qty: {unit.quantity || 1}) - {unit.minBays}-{unit.maxBays} bays
                         </option>
                       ))}
                     </>
@@ -774,10 +775,10 @@ const VacuumQuoteCalculator = () => {
               );
             })()}
             
-            {totalArches > 0 && getAvailableCentralUnits().length === 0 && (
+            {totalBays > 0 && getAvailableCentralUnits().length === 0 && (
               <div className="mt-2 flex items-start gap-2 text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg">
                 <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <span>Total of {totalArches} arches exceeds maximum capacity. Please adjust configuration.</span>
+                <span>Total of {totalBays} bays exceeds maximum capacity. Please adjust configuration.</span>
               </div>
             )}
           </div>
