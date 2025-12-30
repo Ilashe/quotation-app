@@ -7,104 +7,152 @@ import { Calculator, Download, Trash2, Plus, X, Info } from 'lucide-react';
 const priceData = {
   centralUnits: [
     {
-      partNumber: "VAC-20HP",
-      name: "Eurovac III - 20HP & 30\" Sep Detail Vacuum System",
-      price: 17360.00,
-      minBays: 5,
+      partNumber: "VAC-10HP",
+      name: "Eurovac III - 10 HP & 30\" Sep Detailed Vacuum System for 3-4 users",
+      price: 13745.00,
+      minBays: 3,
+      maxBays: 4,
+      hp: "10HP",
+      type: "single"
+    },
+    {
+      partNumber: "VAC-15HP",
+      name: "Eurovac III - 15 HP & 30\" Sep Detailed Vacuum System for 4-5 users",
+      price: 13890.00,
+      minBays: 4,
       maxBays: 5,
-      hp: "20HP"
+      hp: "15HP",
+      type: "single"
+    },
+    {
+      partNumber: "VAC-20HP",
+      name: "Eurovac III - 20 HP & 30\" Sep Detailed Vacuum System for 5-6 users",
+      price: 15339.00,
+      minBays: 5,
+      maxBays: 6,
+      hp: "20HP",
+      type: "single"
     },
     {
       partNumber: "VAC-25HP",
-      name: "Eurovac III - 25HP & 34\" Sep Detail Vacuum System",
-      price: 19370.00,
-      minBays: 6,
-      maxBays: 6,
-      hp: "25HP"
+      name: "Eurovac III - 20 HP Vacuum System for 7-8 users",
+      price: 17103.00,
+      minBays: 7,
+      maxBays: 8,
+      hp: "25HP",
+      type: "single"
     },
     {
       partNumber: "VAC-30HP",
-      name: "Eurovac III - 30HP & 38\" Sep Detail Vacuum System",
-      price: 24213.00,
-      minBays: 7,
+      name: "Eurovac III - 30 HP & 38\" Sep Detailed Vacuum System for 9-10 users",
+      price: 21363.00,
+      minBays: 9,
       maxBays: 10,
       hp: "30HP",
-      quantity: 2
-    },
-    {
-      partNumber: "VAC-DUAL-15HP",
-      name: "Eurovac III - Double 15HP & 38\" Sep Detail Vacuum System",
-      price: 28760.00,
-      minBays: 7,
-      maxBays: 8,
-      hp: "Dual 15HP",
-      quantity: 1
+      type: "single"
     },
     {
       partNumber: "VAC-40HP",
-      name: "Eurovac III - 40HP & 42\" Sep Detail Vacuum System",
-      price: 28329.00,
-      minBays: 9,
-      maxBays: 10,
+      name: "Eurovac III - 40 HP & 30\" Sep Detailed Vacuum System for 11-13 users",
+      price: 26176.00,
+      minBays: 11,
+      maxBays: 13,
       hp: "40HP",
-      quantity: 1
-    },
-    {
-      partNumber: "VAC-DUAL-20HP",
-      name: "Eurovac III - Double 20HP & 38\" Sep Detail Vacuum System",
-      price: 34370.00,
-      minBays: 9,
-      maxBays: 10,
-      hp: "Dual 20HP",
-      quantity: 1
+      type: "single"
     },
     {
       partNumber: "VAC-50HP",
-      name: "Eurovac III - 50HP & 42\" Sep Detail Vacuum System",
-      price: 34320.00,
-      minBays: 11,
-      maxBays: 13,
+      name: "Eurovac III - 50 HP & 42\" Sep Detailed Vacuum System for 14-16 users",
+      price: 31713.00,
+      minBays: 14,
+      maxBays: 16,
       hp: "50HP",
-      quantity: 1
-    },
-    {
-      partNumber: "VAC-DUAL-25HP",
-      name: "Eurovac III - Double 25HP & 42\" Sep Detail Vacuum System",
-      price: 40545.00,
-      minBays: 11,
-      maxBays: 13,
-      hp: "Dual 25HP",
-      quantity: 1
+      type: "single"
     },
     {
       partNumber: "VAC-60HP",
-      name: "Eurovac III - 60HP & 48\" Sep Detail Vacuum System",
+      name: "Eurovac III - 60 HP & 48\" Sep Detailed Vacuum System for 16-20 users",
       price: 40210.00,
-      minBays: 14,
-      maxBays: 15,
+      minBays: 16,
+      maxBays: 20,
       hp: "60HP",
-      quantity: 1
+      type: "single"
+    },
+    {
+      partNumber: "VAC-75HP",
+      name: "Eurovac III - 75 HP & 54\" Sep Detailed Vacuum System for 14-16 users",
+      price: 48545.00,
+      minBays: 14,
+      maxBays: 16,
+      hp: "75HP",
+      type: "single"
+    },
+    {
+      partNumber: "VAC-DUAL-20HP",
+      name: "Eurovac III Double 20 HP & 38\" Bag Separator for 12-13 drops",
+      price: 30321.00,
+      minDrops: 12,
+      maxDrops: 13,
+      hp: "Dual 20HP",
+      type: "dual"
+    },
+    {
+      partNumber: "VAC-DUAL-25HP",
+      name: "Eurovac III Double 25 HP & 42\" Bag Separator for 14-16 drops",
+      price: 35744.00,
+      minDrops: 14,
+      maxDrops: 16,
+      hp: "Dual 25HP",
+      type: "dual"
     },
     {
       partNumber: "VAC-DUAL-30HP",
-      name: "Eurovac III - Double 30HP & 48\" Sep Detail Vacuum System",
-      price: 48025.00,
-      minBays: 14,
-      maxBays: 15,
+      name: "Eurovac III Double 30 HP & 48\" Bag Separator for 17-19 drops",
+      price: 41400.00,
+      minDrops: 17,
+      maxDrops: 19,
       hp: "Dual 30HP",
-      quantity: 1
+      type: "dual"
     },
     {
       partNumber: "VAC-DUAL-40HP",
-      name: "Eurovac III Double 40 HP & 54\" Bag Separator",
+      name: "Eurovac III Double 40 HP & 54\" Bag Separator for 20-22 drops",
       price: 50303.00,
-      minBays: 16,
-      maxBays: 22,
+      minDrops: 20,
+      maxDrops: 22,
       hp: "Dual 40HP",
-      quantity: 1
+      type: "dual"
+    },
+    {
+      partNumber: "VAC-DUAL-50HP",
+      name: "Eurovac III Double 50 HP & 66\" Bag Separator for 23-25 drops",
+      price: 0.00,
+      minDrops: 23,
+      maxDrops: 25,
+      hp: "Dual 50HP",
+      type: "dual"
+    },
+    {
+      partNumber: "VAC-DUAL-60HP",
+      name: "Eurovac III Double 60 HP & 60\" Bag Separator for 26-28 drops",
+      price: 0.00,
+      minDrops: 26,
+      maxDrops: 28,
+      hp: "Dual 60HP",
+      type: "dual"
     }
   ],
   vfdControls: {
+    "10HP": {
+      "230/460": { partNumber: "CPA-VFD-12104602", price: 7200.00 },
+      "575": { partNumber: "CPA-VFD-12105752", price: 7200.00 },
+      "380": { partNumber: "CPA-VFD-12103802", price: 7200.00 }
+    },
+    "15HP": {
+      "230/460": { partNumber: "CPA-VFD-12154602", price: 8500.00 },
+      "575": { partNumber: "CPA-VFD-12155752", price: 8500.00 },
+      "380": { partNumber: "CPA-VFD-12153802", price: 8500.00 }
+    },
     "20HP": {
       "230/460": { partNumber: "CPA-VFD-12204602", price: 9720.00 },
       "575": { partNumber: "CPA-VFD-12205752", price: 9720.00 },
@@ -135,6 +183,11 @@ const priceData = {
       "575": { partNumber: "CPA-VFD-12605752", price: 18385.00 },
       "380": { partNumber: "CPA-VFD-12603802", price: 18385.00 }
     },
+    "75HP": {
+      "230/460": { partNumber: "CPA-VFD-12754602", price: 20500.00 },
+      "575": { partNumber: "CPA-VFD-12755752", price: 20500.00 },
+      "380": { partNumber: "CPA-VFD-12753802", price: 20500.00 }
+    },
     "Dual 15HP": {
       "230/460": { partNumber: "CPA-VFD-111546023", price: 18063.00 },
       "575": { partNumber: "CPA-VFD-111545753", price: 18063.00 },
@@ -156,9 +209,19 @@ const priceData = {
       "380": { partNumber: "CPA-VFD-113043803", price: 25313.00 }
     },
     "Dual 40HP": {
-      "230/460": { partNumber: "CPA-VFD-12404602", price: 13390.00 },
-      "575": { partNumber: "CPA-VFD-12405752", price: 13390.00 },
-      "380": { partNumber: "CPA-VFD-12403802", price: 13390.00 }
+      "230/460": { partNumber: "CPA-VFD-114046023", price: 28000.00 },
+      "575": { partNumber: "CPA-VFD-114045753", price: 28000.00 },
+      "380": { partNumber: "CPA-VFD-114043803", price: 28000.00 }
+    },
+    "Dual 50HP": {
+      "230/460": { partNumber: "CPA-VFD-115046023", price: 32000.00 },
+      "575": { partNumber: "CPA-VFD-115045753", price: 32000.00 },
+      "380": { partNumber: "CPA-VFD-115043803", price: 32000.00 }
+    },
+    "Dual 60HP": {
+      "230/460": { partNumber: "CPA-VFD-116046023", price: 36000.00 },
+      "575": { partNumber: "CPA-VFD-116045753", price: 36000.00 },
+      "380": { partNumber: "CPA-VFD-116043803", price: 36000.00 }
     }
   },
   workstations: {
@@ -167,28 +230,28 @@ const priceData = {
       name: "VAC-ALUM-05-WORKSTATION - Central Vac Line Kit", 
       minBays: 1, 
       maxBays: 5,
-      price: 1331.00 
+      price: 1330.00 
     },
     "VAC-ALUM-10": { 
       partNumber: "SYS-050-205GAR10",
       name: "VAC-ALUM-10-WORKSTATION - Central Vac Line Kit", 
       minBays: 6, 
       maxBays: 10,
-      price: 1371.00 
+      price: 1441.00 
     },
     "VAC-ALUM-15": { 
       partNumber: "SYS-050-205GAR15",
       name: "VAC-ALUM-15-WORKSTATION - Central Vac Line Kit", 
       minBays: 11, 
       maxBays: 15,
-      price: 1441.00 
+      price: 1555.00 
     },
     "VAC-ALUM-20": { 
       partNumber: "SYS-050-205GAR20",
       name: "VAC-ALUM-20-WORKSTATION - Central Vac Line Kit", 
       minBays: 16, 
       maxBays: 20,
-      price: 1522.00 
+      price: 1650.00 
     }
   },
   components: {
@@ -322,6 +385,39 @@ const VacuumQuoteCalculator = () => {
     if (hasEmptyRows) {
       alert('Please ensure all rows have at least 2 bays');
       return;
+    }
+
+    // Validate central unit capacity
+    const warnings = [];
+    centralUnits.forEach(cu => {
+      const selectedUnit = priceData.centralUnits.find(u => u.partNumber === cu.unit);
+      if (selectedUnit) {
+        if (selectedUnit.type === 'single') {
+          // For single units, check against total bays
+          if (totalBays < selectedUnit.minBays) {
+            warnings.push(`⚠️ ${selectedUnit.partNumber}: Requires ${selectedUnit.minBays}-${selectedUnit.maxBays} bays but you have ${totalBays} bays. This unit may not provide sufficient power.`);
+          } else if (totalBays > selectedUnit.maxBays) {
+            warnings.push(`⚠️ ${selectedUnit.partNumber}: Designed for ${selectedUnit.minBays}-${selectedUnit.maxBays} bays but you have ${totalBays} bays. This unit will NOT be sufficient to power your system.`);
+          }
+        } else if (selectedUnit.type === 'dual') {
+          // For dual units, check against total drops
+          if (totalDrops < selectedUnit.minDrops) {
+            warnings.push(`⚠️ ${selectedUnit.partNumber}: Requires ${selectedUnit.minDrops}-${selectedUnit.maxDrops} drops but you have ${totalDrops} drops. This unit may not provide sufficient power.`);
+          } else if (totalDrops > selectedUnit.maxDrops) {
+            warnings.push(`⚠️ ${selectedUnit.partNumber}: Designed for ${selectedUnit.minDrops}-${selectedUnit.maxDrops} drops but you have ${totalDrops} drops. This unit will NOT be sufficient to power your system.`);
+          }
+        }
+      }
+    });
+
+    // Show warnings if any
+    if (warnings.length > 0) {
+      const proceed = confirm(
+        `Central Unit Capacity Warning:\n\n${warnings.join('\n\n')}\n\nDo you want to proceed with this configuration anyway?`
+      );
+      if (!proceed) {
+        return;
+      }
     }
 
     const lineItems = [];
@@ -775,7 +871,7 @@ const VacuumQuoteCalculator = () => {
                       <option value="">Select central unit</option>
                       {priceData.centralUnits.map(unit => (
                         <option key={unit.partNumber} value={unit.partNumber}>
-                          {unit.partNumber} ({unit.minBays}-{unit.maxBays} bays)
+                          {unit.partNumber} ({unit.type === 'single' ? `${unit.minBays}-${unit.maxBays} bays` : `${unit.minDrops}-${unit.maxDrops} drops`})
                         </option>
                       ))}
                     </select>
