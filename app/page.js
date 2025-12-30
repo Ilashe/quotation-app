@@ -409,21 +409,17 @@ const VacuumQuoteCalculator = () => {
       }
     });
     
-    // Check if we have single units and validate against total bays
+    // Check if we have single units and validate against total bays (only undersized)
     if (totalSingleCapacity.max > 0) {
       if (totalBays > totalSingleCapacity.max) {
         warnings.push(`⚠️ Single Central Units: Your configuration has ${totalBays} bays but your selected units can only handle up to ${totalSingleCapacity.max} bays. Please increase quantity or add more units.`);
-      } else if (totalBays < totalSingleCapacity.min) {
-        warnings.push(`⚠️ Single Central Units: Your configuration has ${totalBays} bays but your selected units are designed for at least ${totalSingleCapacity.min} bays. The units may be oversized.`);
       }
     }
     
-    // Check if we have dual units and validate against total drops
+    // Check if we have dual units and validate against total drops (only undersized)
     if (totalDualCapacity.max > 0) {
       if (totalDrops > totalDualCapacity.max) {
         warnings.push(`⚠️ Dual Central Units: Your configuration has ${totalDrops} drops but your selected units can only handle up to ${totalDualCapacity.max} drops. Please increase quantity or add more units.`);
-      } else if (totalDrops < totalDualCapacity.min) {
-        warnings.push(`⚠️ Dual Central Units: Your configuration has ${totalDrops} drops but your selected units are designed for at least ${totalDualCapacity.min} drops. The units may be oversized.`);
       }
     }
 
