@@ -228,7 +228,7 @@ const priceData = {
 
 const VacuumQuoteCalculator = () => {
   const [rows, setRows] = useState([{ id: 1, spots: 5 }]);
-  const [centralUnit, setCentralUnit] = useState('');
+  const [centralUnits, setCentralUnits] = useState([{ id: 1, unit: '', quantity: 1 }]);
   const [siteVoltage, setSiteVoltage] = useState('230/460');
   const [toolPreference, setToolPreference] = useState('half');
   const [quote, setQuote] = useState(null);
@@ -264,24 +264,22 @@ const VacuumQuoteCalculator = () => {
   const totalDrops = calculateTotalDrops();
   const totalBays = rows.reduce((sum, row) => sum + (row.spots || 0), 0);
 
-  // Get available central units based on total bays (not arches)
-  const getAvailableCentralUnits = () => {
-    return priceData.centralUnits.filter(unit => 
-      totalBays >= unit.minBays && totalBays <= unit.maxBays
-    );
+  // Functions for managing central units
+  const addCentralUnit = () => {
+    setCentralUnits([...centralUnits, { id: centralUnits.length + 1, unit: '', quantity: 1 }]);
   };
 
-  useEffect(() => {
-    const availableUnits = getAvailableCentralUnits();
-    if (availableUnits.length > 0 && !centralUnit) {
-      setCentralUnit(availableUnits[0].partNumber);
-    } else if (availableUnits.length > 0) {
-      const isValid = availableUnits.some(unit => unit.partNumber === centralUnit);
-      if (!isValid) {
-        setCentralUnit(availableUnits[0].partNumber);
-      }
+  const removeCentralUnit = (index) => {
+    if (centralUnits.length > 1) {
+      setCentralUnits(centralUnits.filter((_, i) => i !== index));
     }
-  }, [totalBays]);
+  };
+
+  const updateCentralUnit = (index, field, value) => {
+    const newUnits = [...centralUnits];
+    newUnits[index][field] = value;
+    setCentralUnits(newUnits);
+  };
 
   const addRow = () => {
     setRows([...rows, { id: rows.length + 1, spots: 5 }]);
@@ -305,8 +303,17 @@ const VacuumQuoteCalculator = () => {
   };
 
   const calculateQuote = () => {
-    if (!centralUnit) {
-      alert('Please select a central unit');
+    // Validate all central units are selected
+    const hasEmptyUnits = centralUnits.some(cu => !cu.unit || cu.unit === '');
+    if (hasEmptyUnits) {
+      alert('Please select all central units');
+      return;
+    }
+
+    // Validate all central units have valid quantities
+    const hasInvalidQuantity = centralUnits.some(cu => !cu.quantity || cu.quantity < 1);
+    if (hasInvalidQuantity) {
+      alert('Please ensure all central units have a quantity of at least 1');
       return;
     }
 
@@ -318,34 +325,37 @@ const VacuumQuoteCalculator = () => {
     }
 
     const lineItems = [];
-    
-    const selectedUnit = priceData.centralUnits.find(u => u.partNumber === centralUnit);
-    if (!selectedUnit) {
-      alert('Please select a valid central unit');
-      return;
-    }
 
-    // 1. Central Unit (FIRST ITEM)
-    const unitQuantity = selectedUnit.quantity || 1;
-    lineItems.push({
-      partNumber: selectedUnit.partNumber,
-      description: selectedUnit.name,
-      qty: unitQuantity,
-      unitPrice: selectedUnit.price,
-      total: selectedUnit.price * unitQuantity
+    // 1. Central Units (FIRST ITEMS) - Add all selected units with their quantities
+    centralUnits.forEach(cu => {
+      const selectedUnit = priceData.centralUnits.find(u => u.partNumber === cu.unit);
+      if (selectedUnit) {
+        lineItems.push({
+          partNumber: selectedUnit.partNumber,
+          description: selectedUnit.name,
+          qty: cu.quantity,
+          unitPrice: selectedUnit.price,
+          total: selectedUnit.price * cu.quantity
+        });
+      }
     });
 
-    // 2. VFD Control
-    const vfdControl = priceData.vfdControls[selectedUnit.hp]?.[siteVoltage];
-    if (vfdControl) {
-      lineItems.push({
-        partNumber: vfdControl.partNumber,
-        description: `${selectedUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel`,
-        qty: unitQuantity,
-        unitPrice: vfdControl.price,
-        total: vfdControl.price * unitQuantity
-      });
-    }
+    // 2. VFD Controls - Add for each central unit with their quantities
+    centralUnits.forEach(cu => {
+      const selectedUnit = priceData.centralUnits.find(u => u.partNumber === cu.unit);
+      if (selectedUnit) {
+        const vfdControl = priceData.vfdControls[selectedUnit.hp]?.[siteVoltage];
+        if (vfdControl) {
+          lineItems.push({
+            partNumber: vfdControl.partNumber,
+            description: `${selectedUnit.hp} - ${siteVoltage}V Outdoor VFD Control Panel`,
+            qty: cu.quantity,
+            unitPrice: vfdControl.price,
+            total: vfdControl.price * cu.quantity
+          });
+        }
+      }
+    });
 
     // 3. Workstations (per row, based on spots per row)
     rows.forEach((row, index) => {
@@ -580,7 +590,10 @@ const VacuumQuoteCalculator = () => {
         rows: rows.length,
         totalArches: totalArches,
         totalDrops: totalDrops,
-        centralUnit: selectedUnit.partNumber,
+        centralUnits: centralUnits.map(cu => {
+          const unit = priceData.centralUnits.find(u => u.partNumber === cu.unit);
+          return `${cu.unit} (×${cu.quantity})`;
+        }).join(', '),
         voltage: siteVoltage,
         toolPreference: toolPreference
       },
@@ -741,46 +754,80 @@ const VacuumQuoteCalculator = () => {
             </div>
           </div>
 
-          {/* Central Unit Section */}
+          {/* Central Units Section */}
           <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
             <div className="flex items-start justify-between mb-3">
               <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                Central Unit
-                <span className="text-xs font-normal text-slate-500">({totalBays} bays)</span>
+                Central Units
+                <span className="text-xs font-normal text-slate-500">({totalBays} total bays)</span>
               </label>
             </div>
             
-            {(() => {
-              const availableUnits = getAvailableCentralUnits();
-              return (
-                <select
-                  value={centralUnit}
-                  onChange={(e) => setCentralUnit(e.target.value)}
-                  disabled={availableUnits.length === 0}
-                  className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white disabled:bg-slate-100 disabled:cursor-not-allowed transition-all"
-                >
-                  {availableUnits.length === 0 ? (
-                    <option value="">{totalBays === 0 ? "Configure bays below" : `No units available for ${totalBays} bays`}</option>
-                  ) : (
-                    <>
+            <div className="space-y-3">
+              {centralUnits.map((cu, index) => (
+                <div key={cu.id} className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <select
+                      value={cu.unit}
+                      onChange={(e) => updateCentralUnit(index, 'unit', e.target.value)}
+                      className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white"
+                    >
                       <option value="">Select central unit</option>
-                      {availableUnits.map(unit => (
+                      {priceData.centralUnits.map(unit => (
                         <option key={unit.partNumber} value={unit.partNumber}>
-                          {unit.partNumber} (Qty: {unit.quantity || 1}) - {unit.minBays}-{unit.maxBays} bays
+                          {unit.partNumber} ({unit.minBays}-{unit.maxBays} bays)
                         </option>
                       ))}
-                    </>
-                  )}
-                </select>
-              );
-            })()}
-            
-            {totalBays > 0 && getAvailableCentralUnits().length === 0 && (
-              <div className="mt-2 flex items-start gap-2 text-xs text-red-600 bg-red-50 px-3 py-2 rounded-lg">
-                <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <span>Total of {totalBays} bays exceeds maximum capacity. Please adjust configuration.</span>
-              </div>
-            )}
+                    </select>
+                  </div>
+
+                  <div className="w-24">
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="1"
+                        value={cu.quantity}
+                        onChange={(e) => {
+                          const value = e.target.value === '' ? '' : parseInt(e.target.value);
+                          updateCentralUnit(index, 'quantity', value);
+                        }}
+                        onBlur={(e) => {
+                          const value = parseInt(e.target.value) || 1;
+                          updateCentralUnit(index, 'quantity', value >= 1 ? value : 1);
+                        }}
+                        onFocus={(e) => e.target.select()}
+                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 pr-8"
+                      />
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-medium">
+                        qty
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {index === centralUnits.length - 1 && (
+                      <button
+                        onClick={addCentralUnit}
+                        className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all hover:scale-105 active:scale-95"
+                        title="Add central unit"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    )}
+                    
+                    {centralUnits.length > 1 && (
+                      <button
+                        onClick={() => removeCentralUnit(index)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                        title="Remove central unit"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
 
           {/* Options Grid */}
@@ -850,8 +897,8 @@ const VacuumQuoteCalculator = () => {
                 <p className="text-2xl font-bold text-slate-900">{quote.config.totalArches}</p>
               </div>
               <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                <p className="text-xs text-blue-600 font-medium mb-1">Central Unit</p>
-                <p className="text-lg font-bold text-blue-900">{quote.config.centralUnit}</p>
+                <p className="text-xs text-blue-600 font-medium mb-1">Central Units</p>
+                <p className="text-sm font-bold text-blue-900">{quote.config.centralUnits}</p>
               </div>
               <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
                 <p className="text-xs text-slate-500 font-medium mb-1">Total Drops</p>
