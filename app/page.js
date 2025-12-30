@@ -647,52 +647,50 @@ const VacuumQuoteCalculator = () => {
         }
       `}</style>
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Header Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 flex-shrink-0 relative bg-slate-100 rounded-xl p-2">
-                <Image
-                  src="/avw_logo.png"
-                  alt="Company Logo"
-                  fill
-                  className="object-contain p-1"
-                  priority
-                />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Vacuum System Calculator</h1>
-                <p className="text-sm text-slate-500 mt-0.5">Professional quote generation tool</p>
-              </div>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 flex-shrink-0 relative bg-slate-100 rounded-lg p-1.5">
+              <Image
+                src="/avw_logo.png"
+                alt="Company Logo"
+                fill
+                className="object-contain p-0.5"
+                priority
+              />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">Vacuum System Calculator</h1>
+              <p className="text-xs text-slate-500 mt-0.5">Professional quote generation</p>
             </div>
           </div>
         </div>
 
         {/* Configuration Card */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 mb-6">
-          <h2 className="text-lg font-semibold text-slate-900 mb-5 flex items-center gap-2">
-            <div className="w-1.5 h-5 bg-blue-600 rounded-full"></div>
-            System Configuration
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-5">
+          <h2 className="text-base font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <div className="w-1 h-4 bg-blue-600 rounded-full"></div>
+            Configuration
           </h2>
 
           {/* Rows Section */}
-          <div className="mb-6">
-            <label className="text-sm font-semibold text-slate-700 mb-3 block">Parking Rows</label>
+          <div className="mb-4">
+            <label className="text-xs font-semibold text-slate-700 mb-2 block uppercase tracking-wide">Parking Rows</label>
             
             <div className="space-y-2">
               {rows.map((row, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-20">
+                <div key={index} className="flex items-center gap-2">
+                  <div className="w-16">
                     <input
                       type="text"
                       value={`Row ${index + 1}`}
                       disabled
-                      className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-600 text-sm font-medium"
+                      className="w-full px-2 py-1.5 border border-slate-200 rounded-md bg-slate-50 text-slate-600 text-xs font-medium"
                     />
                   </div>
                   
-                  <div className="flex-1 max-w-xs">
+                  <div className="w-28">
                     <div className="relative">
                       <input
                         type="number"
@@ -707,36 +705,36 @@ const VacuumQuoteCalculator = () => {
                           updateRowSpots(index, value >= 2 ? value : 2);
                         }}
                         onFocus={(e) => e.target.select()}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 pr-16"
+                        className="w-full px-2 py-1.5 border border-slate-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent text-xs text-slate-900 pr-10"
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-medium">
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 font-medium">
                         bays
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex-shrink-0 text-xs text-slate-500">
+                  <div className="text-[10px] text-slate-500 w-14">
                     {calculateDropsPerRow(row.spots)} drops
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 ml-auto">
                     {index === rows.length - 1 && (
                       <button
                         onClick={addRow}
-                        className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all hover:scale-105 active:scale-95"
+                        className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-all"
                         title="Add row"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3.5 h-3.5" />
                       </button>
                     )}
                     
                     {rows.length > 1 && (
                       <button
                         onClick={() => removeRow(index)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-all"
                         title="Remove row"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
@@ -744,35 +742,32 @@ const VacuumQuoteCalculator = () => {
               ))}
             </div>
 
-            <div className="mt-3 flex items-center gap-4 text-sm">
+            <div className="mt-2 flex items-center gap-3 text-xs">
               <div className="text-slate-600">
-                <span className="font-semibold text-slate-900">{totalArches}</span> total arches
+                <span className="font-semibold text-slate-900">{totalArches}</span> arches
               </div>
               <div className="text-slate-600">
-                <span className="font-semibold text-slate-900">{totalDrops}</span> total drops
+                <span className="font-semibold text-slate-900">{totalDrops}</span> drops
               </div>
             </div>
           </div>
 
           {/* Central Units Section */}
-          <div className="mb-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
-            <div className="flex items-start justify-between mb-3">
-              <label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                Central Units
-                <span className="text-xs font-normal text-slate-500">({totalBays} total bays)</span>
-              </label>
-            </div>
+          <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-100">
+            <label className="text-xs font-semibold text-slate-700 mb-2 block uppercase tracking-wide">
+              Central Units <span className="text-[10px] font-normal text-slate-500 normal-case">({totalBays} total bays)</span>
+            </label>
             
-            <div className="space-y-3">
+            <div className="space-y-2">
               {centralUnits.map((cu, index) => (
-                <div key={cu.id} className="flex items-center gap-3">
+                <div key={cu.id} className="flex items-center gap-2">
                   <div className="flex-1">
                     <select
                       value={cu.unit}
                       onChange={(e) => updateCentralUnit(index, 'unit', e.target.value)}
-                      className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white"
+                      className="w-full px-2 py-1.5 border border-slate-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent text-xs text-slate-900 bg-white"
                     >
-                      <option value="">Select central unit</option>
+                      <option value="">Select unit</option>
                       {priceData.centralUnits.map(unit => (
                         <option key={unit.partNumber} value={unit.partNumber}>
                           {unit.partNumber} ({unit.minBays}-{unit.maxBays} bays)
@@ -781,7 +776,7 @@ const VacuumQuoteCalculator = () => {
                     </select>
                   </div>
 
-                  <div className="w-24">
+                  <div className="w-20">
                     <div className="relative">
                       <input
                         type="number"
@@ -796,32 +791,32 @@ const VacuumQuoteCalculator = () => {
                           updateCentralUnit(index, 'quantity', value >= 1 ? value : 1);
                         }}
                         onFocus={(e) => e.target.select()}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 pr-8"
+                        className="w-full px-2 py-1.5 border border-slate-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent text-xs text-slate-900 pr-7"
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-slate-500 font-medium">
+                      <span className="absolute right-1.5 top-1/2 -translate-y-1/2 text-[10px] text-slate-500 font-medium">
                         qty
                       </span>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     {index === centralUnits.length - 1 && (
                       <button
                         onClick={addCentralUnit}
-                        className="p-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all hover:scale-105 active:scale-95"
-                        title="Add central unit"
+                        className="p-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-all"
+                        title="Add unit"
                       >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3.5 h-3.5" />
                       </button>
                     )}
                     
                     {centralUnits.length > 1 && (
                       <button
                         onClick={() => removeCentralUnit(index)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                        title="Remove central unit"
+                        className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-all"
+                        title="Remove"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
@@ -831,30 +826,30 @@ const VacuumQuoteCalculator = () => {
           </div>
 
           {/* Options Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="grid grid-cols-2 gap-3 mb-4">
             <div>
-              <label className="text-sm font-semibold text-slate-700 mb-2 block">Site Voltage</label>
+              <label className="text-xs font-semibold text-slate-700 mb-1.5 block uppercase tracking-wide">Voltage</label>
               <select
                 value={siteVoltage}
                 onChange={(e) => setSiteVoltage(e.target.value)}
-                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white"
+                className="w-full px-2 py-1.5 border border-slate-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent text-xs text-slate-900 bg-white"
               >
-                <option value="230/460">230/460V (US Standard)</option>
+                <option value="230/460">230/460V (US)</option>
                 <option value="575">575V (Canada)</option>
-                <option value="380">380V (Australia / Europe)</option>
+                <option value="380">380V (AU/EU)</option>
               </select>
             </div>
 
             <div>
-              <label className="text-sm font-semibold text-slate-700 mb-2 block">Tool Preference</label>
+              <label className="text-xs font-semibold text-slate-700 mb-1.5 block uppercase tracking-wide">Tool Type</label>
               <select
                 value={toolPreference}
                 onChange={(e) => setToolPreference(e.target.value)}
-                className="w-full px-3 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm text-slate-900 bg-white"
+                className="w-full px-2 py-1.5 border border-slate-300 rounded-md focus:ring-1 focus:ring-blue-500 focus:border-transparent text-xs text-slate-900 bg-white"
               >
-                <option value="half">50/50 Mix (Crevice + Claw)</option>
-                <option value="crevice">Crevice Tools Only</option>
-                <option value="claw">Claw Tools Only</option>
+                <option value="half">50/50 Mix</option>
+                <option value="crevice">Crevice Only</option>
+                <option value="claw">Claw Only</option>
               </select>
             </div>
           </div>
@@ -862,78 +857,74 @@ const VacuumQuoteCalculator = () => {
           {/* Generate Button */}
           <button
             onClick={calculateQuote}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all flex items-center justify-center gap-2 shadow-sm hover:shadow-md"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-2.5 rounded-lg transition-all flex items-center justify-center gap-2 text-sm"
           >
-            <Calculator className="w-5 h-5" />
+            <Calculator className="w-4 h-4" />
             Generate Quote
           </button>
         </div>
 
         {/* Quote Results */}
         {quote && (
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                <div className="w-1.5 h-5 bg-green-600 rounded-full"></div>
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold text-slate-900 flex items-center gap-2">
+                <div className="w-1 h-4 bg-green-600 rounded-full"></div>
                 Quote Summary
               </h2>
               <button
                 onClick={exportQuote}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-all shadow-sm hover:shadow-md"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-all"
               >
-                <Download className="w-4 h-4" />
+                <Download className="w-3.5 h-3.5" />
                 Export CSV
               </button>
             </div>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                <p className="text-xs text-slate-500 font-medium mb-1">Total Rows</p>
-                <p className="text-2xl font-bold text-slate-900">{quote.config.rows}</p>
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                <p className="text-[10px] text-slate-500 font-medium mb-0.5 uppercase tracking-wide">Rows</p>
+                <p className="text-xl font-bold text-slate-900">{quote.config.rows}</p>
               </div>
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                <p className="text-xs text-slate-500 font-medium mb-1">Total Arches</p>
-                <p className="text-2xl font-bold text-slate-900">{quote.config.totalArches}</p>
+              <div className="bg-slate-50 rounded-lg p-3 border border-slate-100">
+                <p className="text-[10px] text-slate-500 font-medium mb-0.5 uppercase tracking-wide">Arches</p>
+                <p className="text-xl font-bold text-slate-900">{quote.config.totalArches}</p>
               </div>
-              <div className="bg-blue-50 rounded-xl p-4 border border-blue-100">
-                <p className="text-xs text-blue-600 font-medium mb-1">Central Units</p>
-                <p className="text-sm font-bold text-blue-900">{quote.config.centralUnits}</p>
-              </div>
-              <div className="bg-slate-50 rounded-xl p-4 border border-slate-100">
-                <p className="text-xs text-slate-500 font-medium mb-1">Total Drops</p>
-                <p className="text-2xl font-bold text-slate-900">{quote.config.totalDrops}</p>
+              <div className="bg-blue-50 rounded-lg p-3 border border-blue-100 col-span-2">
+                <p className="text-[10px] text-blue-600 font-medium mb-0.5 uppercase tracking-wide">Central Units</p>
+                <p className="text-xs font-bold text-blue-900 leading-tight">{quote.config.centralUnits}</p>
               </div>
             </div>
 
             {/* Quote Table */}
-            <div className="overflow-x-auto -mx-6 px-6">
+            <div className="overflow-x-auto -mx-5">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b-2 border-slate-200">
-                    <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Part No.</th>
-                    <th className="px-3 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">Description</th>
-                    <th className="px-3 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider">Qty</th>
-                    <th className="px-3 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Unit Price</th>
-                    <th className="px-3 py-3 text-right text-xs font-semibold text-slate-600 uppercase tracking-wider">Total</th>
-                    <th className="px-3 py-3 text-center text-xs font-semibold text-slate-600 uppercase tracking-wider w-16"></th>
+                  <tr className="border-b-2 border-slate-200 bg-slate-50">
+                    <th className="px-3 py-2 text-left text-[10px] font-semibold text-slate-600 uppercase tracking-wider">Part No.</th>
+                    <th className="px-3 py-2 text-left text-[10px] font-semibold text-slate-600 uppercase tracking-wider">Description</th>
+                    <th className="px-3 py-2 text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider">Qty</th>
+                    <th className="px-3 py-2 text-right text-[10px] font-semibold text-slate-600 uppercase tracking-wider">Unit Price</th>
+                    <th className="px-3 py-2 text-right text-[10px] font-semibold text-slate-600 uppercase tracking-wider">Total</th>
+                    <th className="px-3 py-2 text-center text-[10px] font-semibold text-slate-600 uppercase tracking-wider w-12"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {quote.lineItems.map((item, index) => (
                     <tr key={index} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
-                      <td className="px-3 py-3 text-xs font-mono text-slate-700 font-medium">{item.partNumber}</td>
-                      <td className="px-3 py-3 text-sm text-slate-700">{item.description}</td>
-                      <td className="px-3 py-3 text-sm text-center text-slate-900 font-medium">{item.qty}</td>
-                      <td className="px-3 py-3 text-sm text-right text-slate-700 font-mono">${item.unitPrice.toFixed(2)}</td>
-                      <td className="px-3 py-3 text-sm text-right font-semibold text-slate-900 font-mono">${item.total.toFixed(2)}</td>
-                      <td className="px-3 py-3 text-center">
+                      <td className="px-3 py-2 text-[11px] font-mono text-slate-700 font-medium">{item.partNumber}</td>
+                      <td className="px-3 py-2 text-xs text-slate-700">{item.description}</td>
+                      <td className="px-3 py-2 text-xs text-center text-slate-900 font-medium">{item.qty}</td>
+                      <td className="px-3 py-2 text-xs text-right text-slate-700 font-mono">${item.unitPrice.toFixed(2)}</td>
+                      <td className="px-3 py-2 text-xs text-right font-semibold text-slate-900 font-mono">${item.total.toFixed(2)}</td>
+                      <td className="px-3 py-2 text-center">
                         <button
                           onClick={() => deleteLineItem(index)}
-                          className="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-all"
-                          title="Delete item"
+                          className="p-1 text-red-600 hover:bg-red-50 rounded transition-all"
+                          title="Delete"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </td>
                     </tr>
@@ -941,8 +932,8 @@ const VacuumQuoteCalculator = () => {
                 </tbody>
                 <tfoot>
                   <tr className="bg-slate-50 border-t-2 border-slate-200">
-                    <td colSpan="4" className="px-3 py-4 text-right text-base font-bold text-slate-900">Subtotal:</td>
-                    <td colSpan="2" className="px-3 py-4 text-right text-xl font-bold text-blue-600 font-mono">${quote.subtotal.toFixed(2)}</td>
+                    <td colSpan="4" className="px-3 py-3 text-right text-sm font-bold text-slate-900">Subtotal:</td>
+                    <td colSpan="2" className="px-3 py-3 text-right text-lg font-bold text-blue-600 font-mono">${quote.subtotal.toFixed(2)}</td>
                   </tr>
                 </tfoot>
               </table>
