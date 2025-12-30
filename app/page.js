@@ -167,28 +167,28 @@ const priceData = {
       name: "VAC-ALUM-05-WORKSTATION - Central Vac Line Kit", 
       minBays: 1, 
       maxBays: 5,
-      price: 1330.00 
+      price: 1331.00 
     },
     "VAC-ALUM-10": { 
       partNumber: "SYS-050-205GAR10",
       name: "VAC-ALUM-10-WORKSTATION - Central Vac Line Kit", 
       minBays: 6, 
       maxBays: 10,
-      price: 1441.00 
+      price: 1371.00 
     },
     "VAC-ALUM-15": { 
       partNumber: "SYS-050-205GAR15",
       name: "VAC-ALUM-15-WORKSTATION - Central Vac Line Kit", 
       minBays: 11, 
       maxBays: 15,
-      price: 1555.00 
+      price: 1441.00 
     },
     "VAC-ALUM-20": { 
       partNumber: "SYS-050-205GAR20",
       name: "VAC-ALUM-20-WORKSTATION - Central Vac Line Kit", 
       minBays: 16, 
       maxBays: 20,
-      price: 1650.00 
+      price: 1522.00 
     }
   },
   components: {
