@@ -389,26 +389,43 @@ const VacuumQuoteCalculator = () => {
 
     // Validate central unit capacity
     const warnings = [];
+    
+    // Calculate total capacity from all central units
+    let totalSingleCapacity = { min: 0, max: 0 };
+    let totalDualCapacity = { min: 0, max: 0 };
+    
     centralUnits.forEach(cu => {
       const selectedUnit = priceData.centralUnits.find(u => u.partNumber === cu.unit);
       if (selectedUnit) {
         if (selectedUnit.type === 'single') {
-          // For single units, check against total bays
-          if (totalBays < selectedUnit.minBays) {
-            warnings.push(`⚠️ ${selectedUnit.partNumber}: Requires ${selectedUnit.minBays}-${selectedUnit.maxBays} bays but you have ${totalBays} bays. This unit may not provide sufficient power.`);
-          } else if (totalBays > selectedUnit.maxBays) {
-            warnings.push(`⚠️ ${selectedUnit.partNumber}: Designed for ${selectedUnit.minBays}-${selectedUnit.maxBays} bays but you have ${totalBays} bays. This unit will NOT be sufficient to power your system.`);
-          }
+          // Multiply capacity by quantity
+          totalSingleCapacity.min += selectedUnit.minBays * cu.quantity;
+          totalSingleCapacity.max += selectedUnit.maxBays * cu.quantity;
         } else if (selectedUnit.type === 'dual') {
-          // For dual units, check against total drops
-          if (totalDrops < selectedUnit.minDrops) {
-            warnings.push(`⚠️ ${selectedUnit.partNumber}: Requires ${selectedUnit.minDrops}-${selectedUnit.maxDrops} drops but you have ${totalDrops} drops. This unit may not provide sufficient power.`);
-          } else if (totalDrops > selectedUnit.maxDrops) {
-            warnings.push(`⚠️ ${selectedUnit.partNumber}: Designed for ${selectedUnit.minDrops}-${selectedUnit.maxDrops} drops but you have ${totalDrops} drops. This unit will NOT be sufficient to power your system.`);
-          }
+          // Multiply capacity by quantity
+          totalDualCapacity.min += selectedUnit.minDrops * cu.quantity;
+          totalDualCapacity.max += selectedUnit.maxDrops * cu.quantity;
         }
       }
     });
+    
+    // Check if we have single units and validate against total bays
+    if (totalSingleCapacity.max > 0) {
+      if (totalBays > totalSingleCapacity.max) {
+        warnings.push(`⚠️ Single Central Units: Your configuration has ${totalBays} bays but your selected units can only handle up to ${totalSingleCapacity.max} bays. Please increase quantity or add more units.`);
+      } else if (totalBays < totalSingleCapacity.min) {
+        warnings.push(`⚠️ Single Central Units: Your configuration has ${totalBays} bays but your selected units are designed for at least ${totalSingleCapacity.min} bays. The units may be oversized.`);
+      }
+    }
+    
+    // Check if we have dual units and validate against total drops
+    if (totalDualCapacity.max > 0) {
+      if (totalDrops > totalDualCapacity.max) {
+        warnings.push(`⚠️ Dual Central Units: Your configuration has ${totalDrops} drops but your selected units can only handle up to ${totalDualCapacity.max} drops. Please increase quantity or add more units.`);
+      } else if (totalDrops < totalDualCapacity.min) {
+        warnings.push(`⚠️ Dual Central Units: Your configuration has ${totalDrops} drops but your selected units are designed for at least ${totalDualCapacity.min} drops. The units may be oversized.`);
+      }
+    }
 
     // Show warnings if any
     if (warnings.length > 0) {
