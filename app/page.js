@@ -266,28 +266,56 @@ const priceData = {
       "TS3352-30": { name: "Trash Can w/Standard Lid, 30gal., Stainless Steel", price: 1154.00 },
       "GGBTL": { name: "G&G 6FT LED Bendable Tube Light w/cable", price: 590.00 }
     },
-    dropComponents: {
-      "VA2567V": { name: "Vacuum Inlet Valve and 1-1/2\" Hose Connector Assembly", price: 92.20 },
-      "VAC-CUFFSWIVEL-150HX150T": { name: "Swivel Cuff, 1-1/2" Vacuum Hose x 1-1/2" Tube, Gray", price: 5.60 }
+     dropComponents: {
+  "VA2567V": {
+    name: 'Vacuum Inlet Valve and 1-1/2" Hose Connector Assembly',
+    price: 92.20
+  },
+  "VAC-CUFFSWIVEL-150HX150T": {
+    name: 'Swivel Cuff, 1-1/2" Vacuum Hose x 1-1/2" Tube, Gray',
+    price: 5.60
+  }
+},
+tools: {
+  crevice: {
+    "VAC-CREVICE-TOOL": {
+      name: 'Crevice Tool, for 1-1/2" Vacuum Hose',
+      price: 7.80
     },
-    tools: {
-      crevice: {
-        "VAC-CREVICE-TOOL": { name: "Crevice Tool, for 1-1/2" Vacuum Hose", price: 7.80 },
-        "VA3352WS": { name: "Crevice Tool Holster, Black.", price: 114.00 },
-        "VA5129W": { name: "Single Tool Holster Bracket", price: 241.00 }
-      },
-      claw: {
-        "VAC-CLAW-NOZ": { name: "Claw Nozzle, 13"Lg, for 1-1/2" Vacuum Hose", price: 7.20 },
-        "VA5129WS": { name: "Claw Hanger, Two-Peg Style with PVC Flapper Valve.", price: 175.00 },
-        "VA5129WL": { name: "\"L\" Claw Holder Bracket, to Attach Two-Peg Vacuum Claw Holder to Holster Bracket, SS (includes fasteners)", price: 63.70 }
-      }
+    "VA3352WS": {
+      name: 'Crevice Tool Holster, Black.',
+      price: 114.00
     },
-    hoses: {
-      "VAC-HOSE-150": { name: "1-1/2\" Vacuum Hose (per foot)", price: 3.40 },
-      "VAC-HOSE-2IN": { name: "2\" Vacuum Hose (per foot)", price: 4.50 }
+    "VA5129W": {
+      name: 'Single Tool Holster Bracket',
+      price: 241.00
+    }
+  },
+  claw: {
+    "VAC-CLAW-NOZ": {
+      name: 'Claw Nozzle, 13" Lg, for 1-1/2" Vacuum Hose',
+      price: 7.20
+    },
+    "VA5129WS": {
+      name: 'Claw Hanger, Two-Peg Style with PVC Flapper Valve.',
+      price: 175.00
+    },
+    "VA5129WL": {
+      name: '"L" Claw Holder Bracket, to Attach Two-Peg Vacuum Claw Holder to Holster Bracket, SS (includes fasteners)',
+      price: 63.70
     }
   }
-};
+},
+hoses: {
+  "VAC-HOSE-150": {
+    name: '1-1/2" Vacuum Hose (per foot)',
+    price: 3.40
+  },
+  "VAC-HOSE-2IN": {
+    name: '2" Vacuum Hose (per foot)',
+    price: 4.50
+  }
+},
 
 const VacuumQuoteCalculator = () => {
   const [rows, setRows] = useState([{ id: 1, spots: 5 }]);
