@@ -317,7 +317,7 @@ const priceData = {
       price: 4.50
     }
   }
-},
+};
 
 const VacuumQuoteCalculator = () => {
   const [rows, setRows] = useState([{ id: 1, spots: 5 }]);
