@@ -279,7 +279,7 @@ const priceData = {
       claw: {
         "VAC-CLAW-NOZ": { name: "Claw Nozzle, 13\"Lg, for 1-1/2\" Vacuum Hose", price: 7.20 },
         "VA5129WS": { name: "Claw Hanger, Two-Peg Style with PVC Flapper Valve.", price: 175.00 },
-        "VA5129WL": { name: "\\\"L\\\" Claw Holder Bracket, to Attach Two-Peg Vacuum Claw Holder to Holster Bracket, SS (includes fasteners)", price: 63.70 }
+        "VA5129WL": { name: "L Claw Holder Bracket, to Attach Two-Peg Vacuum Claw Holder to Holster Bracket, SS (includes fasteners)", price: 63.70 }
       }
     },
     hoses: {
