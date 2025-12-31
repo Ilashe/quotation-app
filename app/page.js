@@ -149,7 +149,7 @@ const priceData = {
       "380": { partNumber: "CPA-VFD-12103802", price: 7200.00 }
     },
     "15HP": {
-      "230/460": { partNumber: "CPA-VFD-12154602", price: 8500.00 },
+      "230/460": { partNumber: "CPA-VFD-12154602", price: 9235.00 },
       "575": { partNumber: "CPA-VFD-12155752", price: 8500.00 },
       "380": { partNumber: "CPA-VFD-12153802", price: 8500.00 }
     },
@@ -226,32 +226,32 @@ const priceData = {
   },
   workstations: {
     "VAC-ALUM-05": { 
-      partNumber: "SYS-050-205GAR05",
-      name: "VAC-ALUM-05-WORKSTATION - Central Vac Line Kit", 
+      partNumber: "VAC-ALUM-05-WORKSTATION",
+      name: "Central Vac Line Kit; Post/Arch Aluminum Detail Workstation, Above Ground(for 1-5 bays)", 
       minBays: 1, 
       maxBays: 5,
-      price: 1330.00 
+      price: 1266.00 
     },
     "VAC-ALUM-10": { 
-      partNumber: "SYS-050-205GAR10",
-      name: "VAC-ALUM-10-WORKSTATION - Central Vac Line Kit", 
+      partNumber: "VAC-ALUM-10-WORKSTATION",
+      name: "Central Vac Line Kit; Post/Arch Aluminum Detail Workstation, Above Ground(for 6-10 bays)", 
       minBays: 6, 
       maxBays: 10,
-      price: 1441.00 
+      price: 1371.00 
     },
     "VAC-ALUM-15": { 
-      partNumber: "SYS-050-205GAR15",
-      name: "VAC-ALUM-15-WORKSTATION - Central Vac Line Kit", 
+      partNumber: "VAC-ALUM-15-WORKSTATION",
+      name: "Central Vac Line Kit: Detail Workstation, Above Ground(for 11-15 bays)", 
       minBays: 11, 
       maxBays: 15,
-      price: 1555.00 
+      price: 1485.00 
     },
     "VAC-ALUM-20": { 
-      partNumber: "SYS-050-205GAR20",
-      name: "VAC-ALUM-20-WORKSTATION - Central Vac Line Kit", 
+      partNumber: "VAC-ALUM-20-WORKSTATION",
+      name: "Central Vac Line Kit:Detail Workstation, Above Ground(for 16-20 bays)", 
       minBays: 16, 
       maxBays: 20,
-      price: 1650.00 
+      price: 1522.00 
     }
   },
   components: {
@@ -268,23 +268,23 @@ const priceData = {
     },
     dropComponents: {
       "VA2567V": { name: "Vacuum Inlet Valve and 1-1/2\" Hose Connector Assembly", price: 92.20 },
-      "VA3223": { name: "Swivel Cuff", price: 15.40 }
+      "VAC-CUFFSWIVEL-150HX150T": { name: "Swivel Cuff, 1-1/2" Vacuum Hose x 1-1/2" Tube, Gray", price: 5.60 }
     },
     tools: {
       crevice: {
-        "VA2482": { name: "Crevice Tool", price: 7.80 },
-        "VA2482H": { name: "Crevice Tool Holster", price: 114.00 },
-        "VA2482B": { name: "Single Tool Holster Bracket", price: 241.00 }
+        "VAC-CREVICE-TOOL": { name: "Crevice Tool, for 1-1/2" Vacuum Hose", price: 7.80 },
+        "VA3352WS": { name: "Crevice Tool Holster, Black.", price: 114.00 },
+        "VA5129W": { name: "Single Tool Holster Bracket", price: 241.00 }
       },
       claw: {
-        "VA2481": { name: "Claw Nozzle", price: 7.20 },
-        "VA2481H": { name: "Claw Hanger", price: 175.00 },
-        "VA2481B": { name: "Claw Holder Bracket", price: 63.70 }
+        "VAC-CLAW-NOZ": { name: "Claw Nozzle, 13"Lg, for 1-1/2" Vacuum Hose", price: 7.20 },
+        "VA5129WS": { name: "Claw Hanger, Two-Peg Style with PVC Flapper Valve.", price: 175.00 },
+        "VA5129WL": { name: "\"L\" Claw Holder Bracket, to Attach Two-Peg Vacuum Claw Holder to Holster Bracket, SS (includes fasteners)", price: 63.70 }
       }
     },
     hoses: {
-      "VA6101-1.5": { name: "1-1/2\" Vacuum Hose (per foot)", price: 3.40 },
-      "VA6101-2": { name: "2\" Vacuum Hose (per foot)", price: 4.50 }
+      "VAC-HOSE-150": { name: "1-1/2\" Vacuum Hose (per foot)", price: 3.40 },
+      "VAC-HOSE-2IN": { name: "2\" Vacuum Hose (per foot)", price: 4.50 }
     }
   }
 };
@@ -538,9 +538,9 @@ const VacuumQuoteCalculator = () => {
       total: inletValve.price * totalDrops
     });
 
-    const swivelCuff = priceData.components.dropComponents["VA3223"];
+    const swivelCuff = priceData.components.dropComponents["VAC-CUFFSWIVEL-150HX150T"];
     lineItems.push({
-      partNumber: "VA3223",
+      partNumber: "VAC-CUFFSWIVEL-150HX150T",
       description: swivelCuff.name,
       qty: totalDrops,
       unitPrice: swivelCuff.price,
@@ -553,27 +553,27 @@ const VacuumQuoteCalculator = () => {
       const clawCount = totalDrops - creviceCount;
 
       // Crevice tools
-      const creviceTool = priceData.components.tools.crevice["VA2482"];
+      const creviceTool = priceData.components.tools.crevice["VAC-CREVICE-TOOL"];
       lineItems.push({
-        partNumber: "VA2482",
+        partNumber: "VAC-CREVICE-TOOL",
         description: creviceTool.name,
         qty: creviceCount,
         unitPrice: creviceTool.price,
         total: creviceTool.price * creviceCount
       });
 
-      const creviceHolster = priceData.components.tools.crevice["VA2482H"];
+      const creviceHolster = priceData.components.tools.crevice["VA3352WS"];
       lineItems.push({
-        partNumber: "VA2482H",
+        partNumber: "VA3352WS",
         description: creviceHolster.name,
         qty: creviceCount,
         unitPrice: creviceHolster.price,
         total: creviceHolster.price * creviceCount
       });
 
-      const creviceBracket = priceData.components.tools.crevice["VA2482B"];
+      const creviceBracket = priceData.components.tools.crevice["VA5129W"];
       lineItems.push({
-        partNumber: "VA2482B",
+        partNumber: "VA5129W",
         description: creviceBracket.name,
         qty: creviceCount,
         unitPrice: creviceBracket.price,
@@ -581,27 +581,27 @@ const VacuumQuoteCalculator = () => {
       });
 
       // Claw tools
-      const clawNozzle = priceData.components.tools.claw["VA2481"];
+      const clawNozzle = priceData.components.tools.claw["VAC-CLAW-NOZ"];
       lineItems.push({
-        partNumber: "VA2481",
+        partNumber: "VAC-CLAW-NOZ",
         description: clawNozzle.name,
         qty: clawCount,
         unitPrice: clawNozzle.price,
         total: clawNozzle.price * clawCount
       });
 
-      const clawHanger = priceData.components.tools.claw["VA2481H"];
+      const clawHanger = priceData.components.tools.claw["VA5129WS"];
       lineItems.push({
-        partNumber: "VA2481H",
+        partNumber: "VA5129WS",
         description: clawHanger.name,
         qty: clawCount,
         unitPrice: clawHanger.price,
         total: clawHanger.price * clawCount
       });
 
-      const clawBracket = priceData.components.tools.claw["VA2481B"];
+      const clawBracket = priceData.components.tools.claw["VA5129WL"];
       lineItems.push({
-        partNumber: "VA2481B",
+        partNumber: "VA5129WL",
         description: clawBracket.name,
         qty: clawCount,
         unitPrice: clawBracket.price,
@@ -610,27 +610,27 @@ const VacuumQuoteCalculator = () => {
 
     } else if (toolPreference === 'claw') {
       // All claw tools
-      const clawNozzle = priceData.components.tools.claw["VA2481"];
+      const clawNozzle = priceData.components.tools.claw["VAC-CLAW-NOZ"];
       lineItems.push({
-        partNumber: "VA2481",
+        partNumber: "VAC-CLAW-NOZ",
         description: clawNozzle.name,
         qty: totalDrops,
         unitPrice: clawNozzle.price,
         total: clawNozzle.price * totalDrops
       });
 
-      const clawHanger = priceData.components.tools.claw["VA2481H"];
+      const clawHanger = priceData.components.tools.claw["VA5129WS"];
       lineItems.push({
-        partNumber: "VA2481H",
+        partNumber: "VA5129WS",
         description: clawHanger.name,
         qty: totalDrops,
         unitPrice: clawHanger.price,
         total: clawHanger.price * totalDrops
       });
 
-      const clawBracket = priceData.components.tools.claw["VA2481B"];
+      const clawBracket = priceData.components.tools.claw["VA5129WL"];
       lineItems.push({
-        partNumber: "VA2481B",
+        partNumber: "VA5129WL",
         description: clawBracket.name,
         qty: totalDrops,
         unitPrice: clawBracket.price,
@@ -639,27 +639,27 @@ const VacuumQuoteCalculator = () => {
 
     } else {
       // All crevice tools
-      const creviceTool = priceData.components.tools.crevice["VA2482"];
+      const creviceTool = priceData.components.tools.crevice["VAC-CREVICE-TOOL"];
       lineItems.push({
-        partNumber: "VA2482",
+        partNumber: "VAC-CREVICE-TOOL",
         description: creviceTool.name,
         qty: totalDrops,
         unitPrice: creviceTool.price,
         total: creviceTool.price * totalDrops
       });
 
-      const creviceHolster = priceData.components.tools.crevice["VA2482H"];
+      const creviceHolster = priceData.components.tools.crevice["VA3352WS"];
       lineItems.push({
-        partNumber: "VA2482H",
+        partNumber: "VA3352WS",
         description: creviceHolster.name,
         qty: totalDrops,
         unitPrice: creviceHolster.price,
         total: creviceHolster.price * totalDrops
       });
 
-      const creviceBracket = priceData.components.tools.crevice["VA2482B"];
+      const creviceBracket = priceData.components.tools.crevice["VA5129W"];
       lineItems.push({
-        partNumber: "VA2482B",
+        partNumber: "VA5129W",
         description: creviceBracket.name,
         qty: totalDrops,
         unitPrice: creviceBracket.price,
@@ -671,9 +671,9 @@ const VacuumQuoteCalculator = () => {
     // 1.5" hose: drops * 25 feet, rounded to nearest 50
     const hose15Feet = totalDrops * 25;
     const hose15Rounded = roundToNearest50(hose15Feet);
-    const hose15 = priceData.components.hoses["VA6101-1.5"];
+    const hose15 = priceData.components.hoses["VAC-HOSE-150"];
     lineItems.push({
-      partNumber: "VA6101-1.5",
+      partNumber: "VAC-HOSE-150",
       description: `${hose15.name} (${hose15Rounded} ft)`,
       qty: hose15Rounded,
       unitPrice: hose15.price,
@@ -683,9 +683,9 @@ const VacuumQuoteCalculator = () => {
     // 2" hose: total arches * 5 feet, rounded to nearest 50
     const hose2Feet = totalArches * 5;
     const hose2Rounded = roundToNearest50(hose2Feet);
-    const hose2 = priceData.components.hoses["VA6101-2"];
+    const hose2 = priceData.components.hoses["VAC-HOSE-2IN"];
     lineItems.push({
-      partNumber: "VA6101-2",
+      partNumber: "VAC-HOSE-2IN",
       description: `${hose2.name} (${hose2Rounded} ft)`,
       qty: hose2Rounded,
       unitPrice: hose2.price,
