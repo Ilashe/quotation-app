@@ -267,6 +267,7 @@ const priceData = {
       "GGBTL": { name: "G&G 6FT LED Bendable Tube Light w/cable", price: 590.00 }
     },
 
+const productData = {
   dropComponents: {
     "VA2567V": {
       name: 'Vacuum Inlet Valve and 1-1/2" Hose Connector Assembly',
