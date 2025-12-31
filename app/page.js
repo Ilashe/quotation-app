@@ -144,84 +144,84 @@ const priceData = {
   ],
   vfdControls: {
     "10HP": {
-      "230/460": { partNumber: "CPA-VFD-12104602", price: 7200.00 },
-      "575": { partNumber: "CPA-VFD-12105752", price: 7200.00 },
-      "380": { partNumber: "CPA-VFD-12103802", price: 7200.00 }
+      "230/460": { partNumber: "VAC-10HP-480-VFD", price: 0.00 },
+      "575": { partNumber: "VAC-10HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-10HP-380-VFD", price: 0.00 }
     },
     "15HP": {
-      "230/460": { partNumber: "CPA-VFD-12154602", price: 9235.00 },
-      "575": { partNumber: "CPA-VFD-12155752", price: 8500.00 },
-      "380": { partNumber: "CPA-VFD-12153802", price: 8500.00 }
+      "230/460": { partNumber: "VAC-15HP-480-VFD", price: 9235.00 },
+      "575": { partNumber: "VAC-15HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-15HP-380-VFD", price: 0.00 }
     },
     "20HP": {
-      "230/460": { partNumber: "CPA-VFD-12204602", price: 9720.00 },
-      "575": { partNumber: "CPA-VFD-12205752", price: 9720.00 },
-      "380": { partNumber: "CPA-VFD-12203802", price: 9720.00 }
+      "230/460": { partNumber: "VAC-20HP-480-VFD", price: 7740.00 },
+      "575": { partNumber: "VAC-20HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-20HP-380-VFD", price: 0.00 }
     },
     "25HP": {
-      "230/460": { partNumber: "CPA-VFD-12254602", price: 11145.00 },
-      "575": { partNumber: "CPA-VFD-12255752", price: 11145.00 },
-      "380": { partNumber: "CPA-VFD-12253802", price: 11145.00 }
+      "230/460": { partNumber: "VAC-25HP-480-VFD", price: 9275.00 },
+      "575": { partNumber: "VAC-25HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-25HP-380-VFD", price: 0.00 }
     },
     "30HP": {
-      "230/460": { partNumber: "CPA-VFD-12304602", price: 12420.00 },
-      "575": { partNumber: "CPA-VFD-12305752", price: 12420.00 },
-      "380": { partNumber: "CPA-VFD-12303802", price: 12420.00 }
+      "230/460": { partNumber: "VAC-30HP-480-VFD", price: 10270.00 },
+      "575": { partNumber: "VAC-30HP-575-VFD", price: 12059.00 },
+      "380": { partNumber: "VAC-30HP-380-VFD", price: 0.00 }
     },
     "40HP": {
-      "230/460": { partNumber: "CPA-VFD-12404602", price: 13390.00 },
-      "575": { partNumber: "CPA-VFD-12405752", price: 13390.00 },
-      "380": { partNumber: "CPA-VFD-12403802", price: 13390.00 }
+      "230/460": { partNumber: "VAC-40HP-480-VFD", price: 11790.00 },
+      "575": { partNumber: "VAC-40HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-40HP-380-VFD", price: 0.00 }
     },
     "50HP": {
-      "230/460": { partNumber: "CPA-VFD-12504602", price: 16165.00 },
-      "575": { partNumber: "CPA-VFD-12505752", price: 16165.00 },
-      "380": { partNumber: "CPA-VFD-12503802", price: 16165.00 }
+      "230/460": { partNumber: "VAC-50HP-480-VFD", price: 13395.00 },
+      "575": { partNumber: "VAC-50HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-50HP-380-VFD", price: 0.00 }
     },
     "60HP": {
-      "230/460": { partNumber: "CPA-VFD-12604602", price: 18385.00 },
-      "575": { partNumber: "CPA-VFD-12605752", price: 18385.00 },
-      "380": { partNumber: "CPA-VFD-12603802", price: 18385.00 }
+      "230/460": { partNumber: "VAC-60HP-480-VFD", price: 15615.00 },
+      "575": { partNumber: "VAC-60HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-60HP-380-VFD", price: 0.00 }
     },
     "75HP": {
-      "230/460": { partNumber: "CPA-VFD-12754602", price: 20500.00 },
-      "575": { partNumber: "CPA-VFD-12755752", price: 20500.00 },
-      "380": { partNumber: "CPA-VFD-12753802", price: 20500.00 }
+      "230/460": { partNumber: "VAC-75HP-480-VFD", price: 17610.00 },
+      "575": { partNumber: "VAC-75HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-75HP-380-VFD", price: 0.00 }
     },
     "Dual 15HP": {
-      "230/460": { partNumber: "CPA-VFD-111546023", price: 18063.00 },
-      "575": { partNumber: "CPA-VFD-111545753", price: 18063.00 },
-      "380": { partNumber: "CPA-VFD-111543803", price: 18063.00 }
+      "230/460": { partNumber: "VAC-DUAL-15HP-480-VFD", price: 18063.00 },
+      "575": { partNumber: "VAC-DUAL-15HP-575-VFD", price: 18063.00 },
+      "380": { partNumber: "VAC-DUAL-15HP-380-VFD", price: 18063.00 }
     },
     "Dual 20HP": {
-      "230/460": { partNumber: "CPA-VFD-112046023", price: 19913.00 },
-      "575": { partNumber: "CPA-VFD-112045753", price: 19913.00 },
-      "380": { partNumber: "CPA-VFD-112043803", price: 19913.00 }
+      "230/460": { partNumber: "VAC-DUAL-20HP-480-VFD", price: 19913.00 },
+      "575": { partNumber: "VAC-DUAL-20HP-575-VFD", price: 19913.00 },
+      "380": { partNumber: "VAC-DUAL-20HP-380-VFD", price: 19913.00 }
     },
     "Dual 25HP": {
-      "230/460": { partNumber: "CPA-VFD-112546023", price: 21630.00 },
-      "575": { partNumber: "CPA-VFD-112545753", price: 21630.00 },
-      "380": { partNumber: "CPA-VFD-112543803", price: 21630.00 }
+      "230/460": { partNumber: "VAC-DUAL-25HP-480-VFD", price: 0.00 },
+      "575": { partNumber: "VAC-DUAL-25HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-DUAL-25HP-380-VFD", price: 0.00 }
     },
     "Dual 30HP": {
-      "230/460": { partNumber: "CPA-VFD-113046023", price: 25313.00 },
-      "575": { partNumber: "CPA-VFD-113045753", price: 25313.00 },
-      "380": { partNumber: "CPA-VFD-113043803", price: 25313.00 }
+      "230/460": { partNumber: "VAC-DUAL-30HP-480-VFD", price: 0.00 },
+      "575": { partNumber: "VAC-DUAL-30HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-DUAL-30HP-380-VFD", price: 0.00 }
     },
     "Dual 40HP": {
-      "230/460": { partNumber: "CPA-VFD-114046023", price: 28000.00 },
-      "575": { partNumber: "CPA-VFD-114045753", price: 28000.00 },
-      "380": { partNumber: "CPA-VFD-114043803", price: 28000.00 }
+      "230/460": { partNumber: "VAC-DUAL-40HP-480-VFD", price: 20520.00 },
+      "575": { partNumber: "VAC-DUAL-40HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-DUAL-40HP-380-VFD", price: 0.00 }
     },
     "Dual 50HP": {
-      "230/460": { partNumber: "CPA-VFD-115046023", price: 32000.00 },
-      "575": { partNumber: "CPA-VFD-115045753", price: 32000.00 },
-      "380": { partNumber: "CPA-VFD-115043803", price: 32000.00 }
+      "230/460": { partNumber: "VAC-DUAL-50HP-480-VFD", price: 0.00 },
+      "575": { partNumber: "VAC-DUAL-50HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-DUAL-50HP-380-VFD", price: 0.00 }
     },
     "Dual 60HP": {
-      "230/460": { partNumber: "CPA-VFD-116046023", price: 36000.00 },
-      "575": { partNumber: "CPA-VFD-116045753", price: 36000.00 },
-      "380": { partNumber: "CPA-VFD-116043803", price: 36000.00 }
+      "230/460": { partNumber: "VAC-DUAL-60HP-480-VFD", price: 0.00 },
+      "575": { partNumber: "VAC-DUAL-60HP-575-VFD", price: 0.00 },
+      "380": { partNumber: "VAC-DUAL-60HP-380-VFD", price: 0.00 }
     }
   },
   workstations: {
