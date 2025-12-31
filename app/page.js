@@ -265,7 +265,9 @@ const priceData = {
       "VA5129AV": { name: "Cover for Base Plate on Vacuum Arch (5\" Pipe)", price: 474.00 },
       "TS3352-30": { name: "Trash Can w/Standard Lid, 30gal., Stainless Steel", price: 1154.00 },
       "GGBTL": { name: "G&G 6FT LED Bendable Tube Light w/cable", price: 590.00 }
-    },
+    }
+  }
+};
 
 const productData = {
   dropComponents: {
