@@ -10,8 +10,8 @@ const priceData = {
       partNumber: "VAC-10HP",
       name: "Eurovac III - 10 HP & 30\" Sep Detailed Vacuum System for 3-4 users",
       price: 13745.00,
-      minBays: 3,
-      maxBays: 4,
+      minDrops: 6,
+      maxDrops: 8,
       hp: "10HP",
       type: "single"
     },
@@ -19,8 +19,8 @@ const priceData = {
       partNumber: "VAC-15HP",
       name: "Eurovac III - 15 HP & 30\" Sep Detailed Vacuum System for 4-5 users",
       price: 13890.00,
-      minBays: 4,
-      maxBays: 5,
+      minDrops: 8,
+      maxDrops: 10,
       hp: "15HP",
       type: "single"
     },
@@ -28,8 +28,8 @@ const priceData = {
       partNumber: "VAC-20HP",
       name: "Eurovac III - 20 HP & 30\" Sep Detailed Vacuum System for 5-6 users",
       price: 15339.00,
-      minBays: 5,
-      maxBays: 6,
+      minDrops: 10,
+      maxDrops: 12,
       hp: "20HP",
       type: "single"
     },
@@ -37,8 +37,8 @@ const priceData = {
       partNumber: "VAC-25HP",
       name: "Eurovac III - 20 HP Vacuum System for 7-8 users",
       price: 17103.00,
-      minBays: 7,
-      maxBays: 8,
+      minDrops: 14,
+      maxDrops: 16,
       hp: "25HP",
       type: "single"
     },
@@ -46,8 +46,8 @@ const priceData = {
       partNumber: "VAC-30HP",
       name: "Eurovac III - 30 HP & 38\" Sep Detailed Vacuum System for 9-10 users",
       price: 21363.00,
-      minBays: 9,
-      maxBays: 10,
+      minDrops: 18,
+      maxDrops: 20,
       hp: "30HP",
       type: "single"
     },
@@ -55,8 +55,8 @@ const priceData = {
       partNumber: "VAC-40HP",
       name: "Eurovac III - 40 HP & 30\" Sep Detailed Vacuum System for 11-13 users",
       price: 26176.00,
-      minBays: 11,
-      maxBays: 13,
+      minDrops: 22,
+      maxDrops: 26,
       hp: "40HP",
       type: "single"
     },
@@ -64,8 +64,8 @@ const priceData = {
       partNumber: "VAC-50HP",
       name: "Eurovac III - 50 HP & 42\" Sep Detailed Vacuum System for 14-16 users",
       price: 31713.00,
-      minBays: 14,
-      maxBays: 16,
+      minDrops: 28,
+      maxDrops: 32,
       hp: "50HP",
       type: "single"
     },
@@ -73,8 +73,8 @@ const priceData = {
       partNumber: "VAC-60HP",
       name: "Eurovac III - 60 HP & 48\" Sep Detailed Vacuum System for 16-20 users",
       price: 40210.00,
-      minBays: 16,
-      maxBays: 20,
+      minDrops: 32,
+      maxDrops: 40,
       hp: "60HP",
       type: "single"
     },
@@ -82,8 +82,8 @@ const priceData = {
       partNumber: "VAC-75HP",
       name: "Eurovac III - 75 HP & 54\" Sep Detailed Vacuum System for 14-16 users",
       price: 48545.00,
-      minBays: 14,
-      maxBays: 16,
+      minDrops: 28,
+      maxDrops: 32,
       hp: "75HP",
       type: "single"
     },
@@ -390,36 +390,22 @@ const VacuumQuoteCalculator = () => {
     // Validate central unit capacity
     const warnings = [];
     
-    // Calculate total capacity from all central units
-    let totalSingleCapacity = { min: 0, max: 0 };
-    let totalDualCapacity = { min: 0, max: 0 };
+    // Calculate total capacity from all central units (all use drops now)
+    let totalCapacity = { min: 0, max: 0 };
     
     centralUnits.forEach(cu => {
       const selectedUnit = priceData.centralUnits.find(u => u.partNumber === cu.unit);
       if (selectedUnit) {
-        if (selectedUnit.type === 'single') {
-          // Multiply capacity by quantity
-          totalSingleCapacity.min += selectedUnit.minBays * cu.quantity;
-          totalSingleCapacity.max += selectedUnit.maxBays * cu.quantity;
-        } else if (selectedUnit.type === 'dual') {
-          // Multiply capacity by quantity
-          totalDualCapacity.min += selectedUnit.minDrops * cu.quantity;
-          totalDualCapacity.max += selectedUnit.maxDrops * cu.quantity;
-        }
+        // All units use drops now
+        totalCapacity.min += selectedUnit.minDrops * cu.quantity;
+        totalCapacity.max += selectedUnit.maxDrops * cu.quantity;
       }
     });
     
-    // Check if we have single units and validate against total bays (only undersized)
-    if (totalSingleCapacity.max > 0) {
-      if (totalBays > totalSingleCapacity.max) {
-        warnings.push(`⚠️ Single Central Units: Your configuration has ${totalBays} bays but your selected units can only handle up to ${totalSingleCapacity.max} bays. Please increase quantity or add more units.`);
-      }
-    }
-    
-    // Check if we have dual units and validate against total drops (only undersized)
-    if (totalDualCapacity.max > 0) {
-      if (totalDrops > totalDualCapacity.max) {
-        warnings.push(`⚠️ Dual Central Units: Your configuration has ${totalDrops} drops but your selected units can only handle up to ${totalDualCapacity.max} drops. Please increase quantity or add more units.`);
+    // Check if total capacity is sufficient for total drops (only undersized)
+    if (totalCapacity.max > 0) {
+      if (totalDrops > totalCapacity.max) {
+        warnings.push(`⚠️ Central Units: Your configuration has ${totalDrops} drops but your selected units can only handle up to ${totalCapacity.max} drops. Please increase quantity or add more units.`);
       }
     }
 
@@ -884,7 +870,7 @@ const VacuumQuoteCalculator = () => {
                       <option value="">Select central unit</option>
                       {priceData.centralUnits.map(unit => (
                         <option key={unit.partNumber} value={unit.partNumber}>
-                          {unit.partNumber} ({unit.type === 'single' ? `${unit.minBays}-${unit.maxBays} bays` : `${unit.minDrops}-${unit.maxDrops} drops`})
+                          {unit.partNumber} ({unit.minDrops}-{unit.maxDrops} drops)
                         </option>
                       ))}
                     </select>
