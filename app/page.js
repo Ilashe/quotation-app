@@ -10,8 +10,8 @@ const priceData = {
       partNumber: "VAC-10HP",
       name: "Eurovac III - 10 HP & 30\" Sep Detailed Vacuum System for 3-4 users",
       price: 13745.00,
-      minDrops: 3,
-      maxDrops: 4,
+      minArches: 3,
+      maxArches: 4,
       hp: "10HP",
       type: "single"
     },
@@ -19,8 +19,8 @@ const priceData = {
       partNumber: "VAC-15HP",
       name: "Eurovac III - 15 HP & 30\" Sep Detailed Vacuum System for 4-5 users",
       price: 13890.00,
-      minDrops: 4,
-      maxDrops: 5,
+      minArches: 4,
+      maxArches: 5,
       hp: "15HP",
       type: "single"
     },
@@ -28,8 +28,8 @@ const priceData = {
       partNumber: "VAC-20HP",
       name: "Eurovac III - 20 HP & 30\" Sep Detailed Vacuum System for 5-6 users",
       price: 15339.00,
-      minDrops: 5,
-      maxDrops: 6,
+      minArches: 5,
+      maxArches: 6,
       hp: "20HP",
       type: "single"
     },
@@ -37,8 +37,8 @@ const priceData = {
       partNumber: "VAC-25HP",
       name: "Eurovac III - 20 HP Vacuum System for 7-8 users",
       price: 17103.00,
-      minDrops: 7,
-      maxDrops: 8,
+      minArches: 7,
+      maxArches: 8,
       hp: "25HP",
       type: "single"
     },
@@ -46,8 +46,8 @@ const priceData = {
       partNumber: "VAC-30HP",
       name: "Eurovac III - 30 HP & 38\" Sep Detailed Vacuum System for 9-10 users",
       price: 21363.00,
-      minDrops: 9,
-      maxDrops: 10,
+      minArches: 9,
+      maxArches: 10,
       hp: "30HP",
       type: "single"
     },
@@ -55,8 +55,8 @@ const priceData = {
       partNumber: "VAC-40HP",
       name: "Eurovac III - 40 HP & 30\" Sep Detailed Vacuum System for 11-13 users",
       price: 26176.00,
-      minDrops: 11,
-      maxDrops: 13,
+      minArches: 11,
+      maxArches: 13,
       hp: "40HP",
       type: "single"
     },
@@ -64,8 +64,8 @@ const priceData = {
       partNumber: "VAC-50HP",
       name: "Eurovac III - 50 HP & 42\" Sep Detailed Vacuum System for 14-16 users",
       price: 31713.00,
-      minDrops: 14,
-      maxDrops: 16,
+      minArches: 14,
+      maxArches: 16,
       hp: "50HP",
       type: "single"
     },
@@ -73,8 +73,8 @@ const priceData = {
       partNumber: "VAC-60HP",
       name: "Eurovac III - 60 HP & 48\" Sep Detailed Vacuum System for 16-20 users",
       price: 40210.00,
-      minDrops: 16,
-      maxDrops: 20,
+      minArches: 16,
+      maxArches: 20,
       hp: "60HP",
       type: "single"
     },
@@ -82,8 +82,8 @@ const priceData = {
       partNumber: "VAC-75HP",
       name: "Eurovac III - 75 HP & 54\" Sep Detailed Vacuum System for 14-16 users",
       price: 48545.00,
-      minDrops: 14,
-      maxDrops: 16,
+      minArches: 14,
+      maxArches: 16,
       hp: "75HP",
       type: "single"
     },
@@ -91,8 +91,8 @@ const priceData = {
       partNumber: "VAC-DUAL-20HP",
       name: "Eurovac III Double 20 HP & 38\" Bag Separator for 12-13 drops",
       price: 30321.00,
-      minDrops: 12,
-      maxDrops: 13,
+      minArches: 12,
+      maxArches: 13,
       hp: "Dual 20HP",
       type: "dual"
     },
@@ -100,8 +100,8 @@ const priceData = {
       partNumber: "VAC-DUAL-25HP",
       name: "Eurovac III Double 25 HP & 42\" Bag Separator for 14-16 drops",
       price: 35744.00,
-      minDrops: 14,
-      maxDrops: 16,
+      minArches: 14,
+      maxArches: 16,
       hp: "Dual 25HP",
       type: "dual"
     },
@@ -109,8 +109,8 @@ const priceData = {
       partNumber: "VAC-DUAL-30HP",
       name: "Eurovac III Double 30 HP & 48\" Bag Separator for 17-19 drops",
       price: 41400.00,
-      minDrops: 17,
-      maxDrops: 19,
+      minArches: 17,
+      maxArches: 19,
       hp: "Dual 30HP",
       type: "dual"
     },
@@ -118,8 +118,8 @@ const priceData = {
       partNumber: "VAC-DUAL-40HP",
       name: "Eurovac III Double 40 HP & 54\" Bag Separator for 20-22 drops",
       price: 50303.00,
-      minDrops: 20,
-      maxDrops: 22,
+      minArches: 20,
+      maxArches: 22,
       hp: "Dual 40HP",
       type: "dual"
     },
@@ -127,8 +127,8 @@ const priceData = {
       partNumber: "VAC-DUAL-50HP",
       name: "Eurovac III Double 50 HP & 66\" Bag Separator for 23-25 drops",
       price: 0.00,
-      minDrops: 23,
-      maxDrops: 25,
+      minArches: 23,
+      maxArches: 25,
       hp: "Dual 50HP",
       type: "dual"
     },
@@ -136,8 +136,8 @@ const priceData = {
       partNumber: "VAC-DUAL-60HP",
       name: "Eurovac III Double 60 HP & 60\" Bag Separator for 26-28 drops",
       price: 0.00,
-      minDrops: 26,
-      maxDrops: 28,
+      minArches: 26,
+      maxArches: 28,
       hp: "Dual 60HP",
       type: "dual"
     }
@@ -390,22 +390,22 @@ const VacuumQuoteCalculator = () => {
     // Validate central unit capacity
     const warnings = [];
     
-    // Calculate total capacity from all central units (all use drops now)
+    // Calculate total capacity from all central units (all use arches now)
     let totalCapacity = { min: 0, max: 0 };
     
     centralUnits.forEach(cu => {
       const selectedUnit = priceData.centralUnits.find(u => u.partNumber === cu.unit);
       if (selectedUnit) {
-        // All units use drops now
-        totalCapacity.min += selectedUnit.minDrops * cu.quantity;
-        totalCapacity.max += selectedUnit.maxDrops * cu.quantity;
+        // All units use arches now
+        totalCapacity.min += selectedUnit.minArches * cu.quantity;
+        totalCapacity.max += selectedUnit.maxArches * cu.quantity;
       }
     });
     
-    // Check if total capacity is sufficient for total drops (only undersized)
+    // Check if total capacity is sufficient for total arches (only undersized)
     if (totalCapacity.max > 0) {
-      if (totalDrops > totalCapacity.max) {
-        warnings.push(`⚠️ Central Units: Your configuration has ${totalDrops} drops but your selected units can only handle up to ${totalCapacity.max} drops. Please increase quantity or add more units.`);
+      if (totalArches > totalCapacity.max) {
+        warnings.push(`⚠️ Central Units: Your configuration has ${totalArches} arches but your selected units can only handle up to ${totalCapacity.max} arches. Please increase quantity or add more units.`);
       }
     }
 
@@ -870,7 +870,7 @@ const VacuumQuoteCalculator = () => {
                       <option value="">Select central unit</option>
                       {priceData.centralUnits.map(unit => (
                         <option key={unit.partNumber} value={unit.partNumber}>
-                          {unit.partNumber} ({unit.minDrops}-{unit.maxDrops} drops)
+                          {unit.partNumber} ({unit.minArches}-{unit.maxArches} arches)
                         </option>
                       ))}
                     </select>
