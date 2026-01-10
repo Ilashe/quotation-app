@@ -263,8 +263,9 @@ const priceData = {
       "R-VA2476C1": { name: "Cap for Vacuum Arch, 6\" OD, UHMW", price: 114.00 },
       "VA3246S": { name: "Separator, Baffle Type, Self-Serve Vacuum", price: 1613.00 },
       "VA5129AV": { name: "Cover for Base Plate on Vacuum Arch (5\" Pipe)", price: 474.00 },
-      "TS3352-30": { name: "Trash Can w/Standard Lid, 30gal., Stainless Steel", price: 1154.00 },
-      "GGBTL": { name: "G&G 6FT LED Bendable Tube Light w/cable", price: 590.00 }
+      "TS3352": { name: "Trash Can (55 gal. size, 36\" tall), w/Standard Lid, w/o Liner, Stainless Steel", price: 1333.00 },
+      "GGBTL": { name: "G&G 6FT LED Bendable Tube Light w/cable", price: 590.00 },
+      "VA5129-MAT": { name: "Arch Floor Mat Rack, Attachment to single 5\" Round Vacuum Arch, SS Mesh", price: 363.00 }
     },
     dropComponents: {
       "VA2567V": { name: "Vacuum Inlet Valve and 1-1/2\" Hose Connector Assembly", price: 92.20 },
